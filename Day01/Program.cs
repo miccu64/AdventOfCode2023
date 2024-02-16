@@ -15,12 +15,7 @@ using (var streamReader = new StreamReader(fileStream, Encoding.UTF8, true))
                 numbersInLine.Add(number);
         }
 
-        if (numbersInLine.Count == 1)
-        {
-            uint number = numbersInLine.Single();
-            result += (10 * number) + number;
-        }
-        else if (numbersInLine.Count >= 2)
+        if (numbersInLine.Count > 0)
         {
             uint number1 = numbersInLine.First();
             uint number2 = numbersInLine.Last();
