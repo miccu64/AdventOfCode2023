@@ -3,32 +3,31 @@
     internal struct CubesSet
     {
         public bool IsSetPossible { get; private set; }
+        public uint BlueCount { get; private set; }
+        public uint GreenCount { get; private set; }
+        public uint RedCount { get; private set; }
 
         public CubesSet(string info)
         {
-            int blueCount = 0;
-            int greenCount = 0;
-            int redCount = 0;
-
             string[] splittedInfo = info.Split(',');
             foreach (string cubesInfo in splittedInfo)
             {
                 string[] splittedCubesInfo = cubesInfo.Trim().Split(" ");
 
                 string countString = splittedCubesInfo.First();
-                int count = int.Parse(countString);
+                uint count = uint.Parse(countString);
 
                 string currentColor = splittedCubesInfo[1];
                 switch (currentColor)
                 {
                     case "blue":
-                        blueCount += count;
+                        BlueCount = count;
                         break;
                     case "green":
-                        greenCount += count;
+                        GreenCount = count;
                         break;
                     case "red":
-                        redCount += count;
+                        RedCount = count;
                         break;
                 }
             }
@@ -37,7 +36,7 @@
             int greenMaxCount = 13;
             int redMaxCount = 12;
 
-            IsSetPossible = blueCount <= blueMaxCount && greenCount <= greenMaxCount && redCount <= redMaxCount;
+            IsSetPossible = BlueCount <= blueMaxCount && GreenCount <= greenMaxCount && RedCount <= redMaxCount;
         }
     }
 }
