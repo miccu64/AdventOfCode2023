@@ -2,27 +2,27 @@
 {
     internal class FileProcessor
     {
-        public ulong NoGearsResult { get; private set; }
-        public ulong WithGearsResult { get; private set; }
+        public long NoGearsResult { get; private set; }
+        public long WithGearsResult { get; private set; }
 
-        private readonly List<Tuple<int, int>> asterisks = new();
+        private List<Tuple<int, int>> asterisks = new();
 
         public FileProcessor(string fileName)
         {
             NoGearsResult = SumNoGears(fileName);
-            WithGearsResult = NoGearsResult - SumGearsSubtractValues(fileName);
+            WithGearsResult = NoGearsResult + SumGearsSubtractValues(fileName);
         }
 
-        private ulong SumNoGears(string fileName)
+        private long SumNoGears(string fileName)
         {
-            ulong summary = 0;
+            long summary = 0;
             List<string> fileContent = LoadFileWithPadding(fileName);
 
             for (int lineIndex = 1; lineIndex < fileContent.Count - 1; lineIndex++)
             {
-                string upperLine = PadLine(fileContent[lineIndex - 1]);
-                string line = PadLine(fileContent[lineIndex]);
-                string lowerLine = PadLine(fileContent[lineIndex + 1]);
+                string upperLine = fileContent[lineIndex - 1];
+                string line = fileContent[lineIndex];
+                string lowerLine = fileContent[lineIndex + 1];
 
                 string numberString = "";
                 for (int charIndex = 1; charIndex < line.Length - 1; charIndex++)
@@ -81,12 +81,14 @@
                 }
             }
 
+            asterisks = asterisks.Distinct().ToList();
+
             return summary;
         }
 
-        private ulong SumGearsSubtractValues(string fileName)
+        private long SumGearsSubtractValues(string fileName)
         {
-            ulong summary = 0;
+            long summary = 0;
             List<string> fileContent = LoadFileWithPadding(fileName);
 
             foreach (Tuple<int, int> xy in asterisks)
@@ -94,17 +96,44 @@
                 int x = xy.Item1;
                 int y = xy.Item2;
 
+                List<uint> adjacentNumbers = new();
+
                 for (int currentY = y - 1; currentY <= y + 1; currentY++)
                 {
                     string line = fileContent[currentY];
-
                     for (int currentX = x - 1; currentX <= x + 1; currentX++)
                     {
-                        if (currentX == x && currentY == y)
+                        char currentChar = line[currentX];
+                        if (!IsDigit(currentChar))  
                             continue;
 
+                        string wholeNumber = currentChar.ToString();
+                        int xShiftToLeft = -1;
+                        currentChar = line[currentX + xShiftToLeft];
+                        while (IsDigit(currentChar))
+                        {
+                            wholeNumber = currentChar + wholeNumber;
+                            xShiftToLeft--;
+                            currentChar = line[currentX + xShiftToLeft];
+                        }
 
+                        currentChar = line[currentX + 1];
+                        while (IsDigit(currentChar))
+                        {
+                            wholeNumber += currentChar;
+                            currentX++;
+                            currentChar = line[currentX + 1];
+                        }
+
+                        adjacentNumbers.Add(uint.Parse(wholeNumber));
                     }
+                }
+
+                if (adjacentNumbers.Count == 2)
+                {
+                    uint number1 = adjacentNumbers.First();
+                    uint number2 = adjacentNumbers.Last();
+                    summary += number1 * number2 - number1 - number2;
                 }
             }
 
@@ -114,17 +143,12 @@
         private List<string> LoadFileWithPadding(string fileName)
         {
             List<string> fileContent = File.ReadLines(fileName)
-                .Select(PadLine)
+                .Select(line => $".{line}.")
                 .ToList();
             fileContent.Insert(0, new string('.', fileContent[0].Length));
             fileContent.Add(new string('.', fileContent[0].Length));
 
             return fileContent;
-        }
-
-        private string PadLine(string line)
-        {
-            return $".{line}.";
         }
 
         private bool IsDigit(char c)
