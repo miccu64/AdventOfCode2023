@@ -3,14 +3,14 @@
     internal class FileProcessor
     {
         public long NoGearsResult { get; private set; }
-        public long WithGearsResult { get; private set; }
+        public long GearRatio { get; private set; }
 
         private List<Tuple<int, int>> asterisks = new();
 
         public FileProcessor(string fileName)
         {
             NoGearsResult = SumNoGears(fileName);
-            WithGearsResult = NoGearsResult + SumGearsSubtractValues(fileName);
+            GearRatio = SumGearsSubtractValues(fileName);
         }
 
         private long SumNoGears(string fileName)
@@ -42,13 +42,12 @@
                     if (numberString.Length == 0)
                         continue;
 
-
                     int charBeforeNumberIndex = charIndex - numberString.Length - 1;
                     char charBeforeNumber = line[charBeforeNumberIndex];
 
                     if (IsSpecial(character) || IsSpecial(charBeforeNumber))
                     {
-                        summary += uint.Parse(numberString);
+                        summary += int.Parse(numberString);
 
                         if (IsAsterisk(character))
                             asterisks.Add(new Tuple<int, int>(charIndex, lineIndex));
@@ -65,7 +64,7 @@
                             char lowerChar = lowerLine[upperLowerCharIndex];
                             if (IsSpecial(upperChar) || IsSpecial(lowerChar))
                             {
-                                summary += uint.Parse(numberString);
+                                summary += int.Parse(numberString);
 
                                 if (IsAsterisk(upperChar))
                                     asterisks.Add(new Tuple<int, int>(upperLowerCharIndex, lineIndex - 1));
@@ -91,20 +90,20 @@
             long summary = 0;
             List<string> fileContent = LoadFileWithPadding(fileName);
 
-            foreach (Tuple<int, int> xy in asterisks)
+            foreach (Tuple<int, int> asterisk in asterisks)
             {
-                int x = xy.Item1;
-                int y = xy.Item2;
+                int xAsterisk = asterisk.Item1;
+                int yAsterisk = asterisk.Item2;
 
-                List<uint> adjacentNumbers = new();
+                List<int> adjacentNumbers = new();
 
-                for (int currentY = y - 1; currentY <= y + 1; currentY++)
+                for (int y = yAsterisk - 1; y <= yAsterisk + 1; y++)
                 {
-                    string line = fileContent[currentY];
-                    for (int currentX = x - 1; currentX <= x + 1; currentX++)
+                    string line = fileContent[y];
+                    for (int currentX = xAsterisk - 1; currentX <= xAsterisk + 1; currentX++)
                     {
                         char currentChar = line[currentX];
-                        if (!IsDigit(currentChar))  
+                        if (!IsDigit(currentChar))
                             continue;
 
                         string wholeNumber = currentChar.ToString();
@@ -125,15 +124,15 @@
                             currentChar = line[currentX + 1];
                         }
 
-                        adjacentNumbers.Add(uint.Parse(wholeNumber));
+                        adjacentNumbers.Add(int.Parse(wholeNumber));
                     }
                 }
 
                 if (adjacentNumbers.Count == 2)
                 {
-                    uint number1 = adjacentNumbers.First();
-                    uint number2 = adjacentNumbers.Last();
-                    summary += number1 * number2 - number1 - number2;
+                    int number1 = adjacentNumbers.First();
+                    int number2 = adjacentNumbers.Last();
+                    summary += number1 * number2;
                 }
             }
 
