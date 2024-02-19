@@ -13,3 +13,13 @@ foreach (string line in data)
     result += new Card(line).Points;
 
 Console.WriteLine($"Result: {result}");
+
+
+
+Dictionary<int, Card> testCards = testData.Select(line => new Card(line)).ToDictionary(card => card.Id);
+long testSummary = Card.FindWonCardsCount(testCards.Keys.ToList(), testCards);
+Console.WriteLine($"Test part 2 - expected: 30, got: {testSummary}\n");
+
+Dictionary<int, Card> cards = data.Select(line => new Card(line)).ToDictionary(card => card.Id);
+long summary = Card.FindWonCardsCount(cards.Keys.ToList(), cards);
+Console.WriteLine($"Part 2 result: {summary}");
