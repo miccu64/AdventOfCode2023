@@ -4,7 +4,7 @@
     {
         public string Name { get; private set; }
 
-        public readonly List<Range> SourceToDestinationRanges = new();
+        public readonly List<Range> Ranges = new();
 
         public Map(string[] data)
         {
@@ -17,19 +17,30 @@
                 long sourceRangeStart = long.Parse(splittedLine[1]);
                 long rangeLength = long.Parse(splittedLine[2]);
 
-                SourceToDestinationRanges.Add(new Range(sourceRangeStart, destinationRangeStart, rangeLength));
+                Ranges.Add(new Range(destinationRangeStart, sourceRangeStart, rangeLength));
             }
         }
 
         public long GetDestinationValue(long sourceValue)
         {
-            foreach (Range range in SourceToDestinationRanges)
+            foreach (Range range in Ranges)
             {
                 if (range.TryGetDestinationValue(sourceValue, out long destinationValue))
                     return destinationValue;
             }
 
             return sourceValue;
+        }
+
+        public long GetSourceValue(long destinationValue)
+        {
+            foreach (Range range in Ranges)
+            {
+                if (range.GetSourceValue(destinationValue, out long sourceValue))
+                    return sourceValue;
+            }
+
+            return destinationValue;
         }
     }
 }

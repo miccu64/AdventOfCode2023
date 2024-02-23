@@ -24,14 +24,14 @@
             }
         }
 
-        public long FindLowestLocationNumber()
+        public virtual long FindLowestLocationNumber()
         {
             long lowestLocationNumber = long.MaxValue;
 
             foreach (long seed in Seeds)
             {
                 long latestValue = seed;
-                foreach(Map map in Maps)
+                foreach (Map map in Maps)
                     latestValue = map.GetDestinationValue(latestValue);
 
                 if (latestValue < lowestLocationNumber)

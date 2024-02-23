@@ -1,48 +1,37 @@
-﻿using System.Diagnostics;
-
-namespace Day05.Models
+﻿namespace Day05.Models
 {
     internal class AlmanacPart2 : Almanac
     {
-        public AlmanacPart2(string fileName) : base(fileName) { }
+        public AlmanacPart2(string fileName) : base(fileName) {}
 
-        public new long FindLowestLocationNumber()
+        public override long FindLowestLocationNumber()
         {
-            long lowestLocationNumber = long.MaxValue;
-            ReaderWriterLockSlim lockSlim = new();
-
-            for (int i = 0; i < Seeds.Count; i += 2)
+            for (long startLocation = 0; startLocation < long.MaxValue; startLocation++)
             {
-                Console.WriteLine("Loop: " + i / 2);
+                long latestValue = startLocation;
+                for (int i = Maps.Count - 1; i >= 0; i--)
+                    latestValue = Maps[i].GetSourceValue(latestValue);
 
-                long startSeed = Seeds[i];
-                long rangeLength = Seeds[i + 1];
-                long rangeEnd = startSeed + rangeLength;
-
-                Parallel.For(startSeed, rangeEnd, seed =>
-                {
-                    long latestValue = seed;
-                    foreach (Map map in Maps)
-                        latestValue = map.GetDestinationValue(latestValue);
-
-                    lockSlim.EnterReadLock();
-                    long copyLowestLocationNumber = lowestLocationNumber;
-                    lockSlim.ExitReadLock();
-
-                    if (latestValue < copyLowestLocationNumber)
-                    {
-                        lockSlim.EnterWriteLock();
-
-                        if (latestValue < lowestLocationNumber)
-                            lowestLocationNumber = latestValue;
-
-                        lockSlim.ExitWriteLock();
-                        Console.WriteLine("New lowest location value: " + latestValue);
-                    }
-                });
+                if (CheckSeedExistence(latestValue))
+                    return startLocation;
             }
 
-            return lowestLocationNumber;
+            return 0;
+        }
+
+        private bool CheckSeedExistence(long seed)
+        {
+            for (int i = 0; i < Seeds.Count / 2; i++)
+            {
+                long start = Seeds[i * 2];
+                long length = Seeds[i * 2 + 1];
+                long end = start + length;
+
+                if (start <= seed && seed < end)
+                    return true;
+            }
+
+            return false;
         }
     }
 }
