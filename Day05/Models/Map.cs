@@ -4,14 +4,10 @@
     {
         public string Name { get; private set; }
 
-        public readonly Dictionary<ulong, ulong> SourceToDestination;
+        public readonly List<Range> SourceToDestinationRanges = new();
 
         public Map(string[] data)
         {
-            SourceToDestination = new();
-            for (ulong i = 0; i < 100; i++)
-                SourceToDestination.Add(i, i);
-
             Name = data[0].Trim()[..^5];
 
             for (int i = 1; i < data.Length; i++)
@@ -21,14 +17,19 @@
                 ulong sourceRangeStart = ulong.Parse(splittedLine[1]);
                 ulong rangeLength = ulong.Parse(splittedLine[2]);
 
-                for (ulong offset = 0; offset < rangeLength; offset++)
-                {
-                    ulong source = sourceRangeStart + offset;
-                    ulong destination = destinationRangeStart + offset;
-
-                    SourceToDestination[source] = destination;
-                }
+                SourceToDestinationRanges.Add(new Range(sourceRangeStart, destinationRangeStart, rangeLength));
             }
+        }
+
+        public ulong GetDestinationValue(ulong sourceValue)
+        {
+            foreach (Range range in SourceToDestinationRanges)
+            {
+                if (range.TryGetDestinationValue(sourceValue, out ulong destinationValue))
+                    return destinationValue;
+            }
+
+            return sourceValue;
         }
     }
 }

@@ -32,7 +32,7 @@
             {
                 ulong latestValue = seed;
                 foreach(Map map in Maps)
-                    latestValue = map.SourceToDestination[latestValue];
+                    latestValue = map.GetDestinationValue(latestValue);
 
                 if (latestValue < lowestLocationNumber)
                     lowestLocationNumber = latestValue;
