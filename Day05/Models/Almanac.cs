@@ -2,7 +2,7 @@
 {
     internal class Almanac
     {
-        public readonly List<ulong> Seeds;
+        public readonly List<long> Seeds;
 
         public readonly List<Map> Maps = new();
 
@@ -11,7 +11,7 @@
             string[] data = File.ReadAllLines(fileName).Append("").ToArray();
 
             string[] seedData = data[0].Split(' ')[1..];
-            Seeds = seedData.Select(ulong.Parse).ToList();
+            Seeds = seedData.Select(long.Parse).ToList();
 
             int currentStart = 2;
             for (int i = currentStart; i < data.Length; i++)
@@ -24,13 +24,13 @@
             }
         }
 
-        public ulong FindLowestLocationNumber()
+        public long FindLowestLocationNumber()
         {
-            ulong lowestLocationNumber = ulong.MaxValue;
+            long lowestLocationNumber = long.MaxValue;
 
-            foreach (ulong seed in Seeds)
+            foreach (long seed in Seeds)
             {
-                ulong latestValue = seed;
+                long latestValue = seed;
                 foreach(Map map in Maps)
                     latestValue = map.GetDestinationValue(latestValue);
 

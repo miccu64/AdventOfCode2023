@@ -2,18 +2,18 @@
 {
     internal class Range
     {
-        public ulong SourceRangeStart { get; private set; }
-        public ulong DestinationRangeStart { get; private set; }
-        public ulong RangeLength { get; private set; }
+        public long SourceRangeStart { get; private set; }
+        public long DestinationRangeStart { get; private set; }
+        public long RangeLength { get; private set; }
 
-        public Range(ulong sourceRangeStart, ulong destinationRangeStart, ulong rangeLength)
+        public Range(long sourceRangeStart, long destinationRangeStart, long rangeLength)
         {
             SourceRangeStart = sourceRangeStart;
             DestinationRangeStart = destinationRangeStart;
             RangeLength = rangeLength;
         }
 
-        public bool TryGetDestinationValue(ulong sourceValue, out ulong destinationValue)
+        public bool TryGetDestinationValue(long sourceValue, out long destinationValue)
         {
             if (sourceValue < SourceRangeStart || sourceValue >= SourceRangeStart + RangeLength)
             {
@@ -21,7 +21,7 @@
                 return false;
             }
 
-            ulong difference = sourceValue - SourceRangeStart;
+            long difference = sourceValue - SourceRangeStart;
             destinationValue = DestinationRangeStart + difference;
             return true;
         }

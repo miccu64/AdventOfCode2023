@@ -1,30 +1,45 @@
-﻿namespace Day05.Models
+﻿using System.Diagnostics;
+
+namespace Day05.Models
 {
     internal class AlmanacPart2 : Almanac
     {
         public AlmanacPart2(string fileName) : base(fileName) { }
 
-        public new ulong FindLowestLocationNumber()
+        public new long FindLowestLocationNumber()
         {
-            ulong lowestLocationNumber = ulong.MaxValue;
+            long lowestLocationNumber = long.MaxValue;
+            ReaderWriterLockSlim lockSlim = new();
 
             for (int i = 0; i < Seeds.Count; i += 2)
             {
-                ulong currentSeed = Seeds[i];
-                ulong rangeLength = Seeds[i + 1];
-                ulong rangeEnd = currentSeed + rangeLength - 1;
+                Console.WriteLine("Loop: " + i / 2);
 
-                while (currentSeed <= rangeEnd)
+                long startSeed = Seeds[i];
+                long rangeLength = Seeds[i + 1];
+                long rangeEnd = startSeed + rangeLength;
+
+                Parallel.For(startSeed, rangeEnd, seed =>
                 {
-                    ulong latestValue = currentSeed;
+                    long latestValue = seed;
                     foreach (Map map in Maps)
                         latestValue = map.GetDestinationValue(latestValue);
 
-                    if (latestValue < lowestLocationNumber)
-                        lowestLocationNumber = latestValue;
+                    lockSlim.EnterReadLock();
+                    long copyLowestLocationNumber = lowestLocationNumber;
+                    lockSlim.ExitReadLock();
 
-                    currentSeed++;
-                }
+                    if (latestValue < copyLowestLocationNumber)
+                    {
+                        lockSlim.EnterWriteLock();
+
+                        if (latestValue < lowestLocationNumber)
+                            lowestLocationNumber = latestValue;
+
+                        lockSlim.ExitWriteLock();
+                        Console.WriteLine("New lowest location value: " + latestValue);
+                    }
+                });
             }
 
             return lowestLocationNumber;

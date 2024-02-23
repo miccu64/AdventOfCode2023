@@ -13,19 +13,19 @@
             for (int i = 1; i < data.Length; i++)
             {
                 string[] splittedLine = data[i].Trim().Split(' ');
-                ulong destinationRangeStart = ulong.Parse(splittedLine[0]);
-                ulong sourceRangeStart = ulong.Parse(splittedLine[1]);
-                ulong rangeLength = ulong.Parse(splittedLine[2]);
+                long destinationRangeStart = long.Parse(splittedLine[0]);
+                long sourceRangeStart = long.Parse(splittedLine[1]);
+                long rangeLength = long.Parse(splittedLine[2]);
 
                 SourceToDestinationRanges.Add(new Range(sourceRangeStart, destinationRangeStart, rangeLength));
             }
         }
 
-        public ulong GetDestinationValue(ulong sourceValue)
+        public long GetDestinationValue(long sourceValue)
         {
             foreach (Range range in SourceToDestinationRanges)
             {
-                if (range.TryGetDestinationValue(sourceValue, out ulong destinationValue))
+                if (range.TryGetDestinationValue(sourceValue, out long destinationValue))
                     return destinationValue;
             }
 
