@@ -4,7 +4,7 @@
     {
         public string Name { get; private set; }
 
-        public readonly List<Range> Ranges = new();
+        private readonly List<Range> Ranges = new();
 
         public Map(string[] data)
         {
@@ -41,6 +41,22 @@
             }
 
             return destinationValue;
+        }
+
+        public long FindMaxPossibleValue()
+        {
+            long max = 0;
+            foreach (Range range in Ranges)
+            {
+                long start = range.DestinationRangeStart;
+                long length = range.RangeLength;
+                long end = start + length - 1;
+
+                if (max < end)
+                    max = end;
+            }
+
+            return max;
         }
     }
 }
