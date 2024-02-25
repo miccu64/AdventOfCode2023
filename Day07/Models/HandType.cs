@@ -1,6 +1,6 @@
 ﻿namespace Day07.Models
 {
-    internal enum HandTypes
+    internal enum HandType
     {
         HighCard = 0,
         OnePair = 1,
