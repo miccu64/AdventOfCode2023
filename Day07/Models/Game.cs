@@ -9,13 +9,18 @@
         {
             string[] data = File.ReadAllLines(fileName);
             foreach (string line in data)
-                Hands.Add(new Hand(line));
+                Hands.Add(CreateHand(line));
 
             Hands.Sort();
 
             Result = 0;
             for (int i = 1; i <= Hands.Count; i++)
                 Result += i * Hands[i - 1].PointsToMultiply;
+        }
+
+        protected virtual Hand CreateHand(string line)
+        {
+            return new Hand(line);
         }
     }
 }

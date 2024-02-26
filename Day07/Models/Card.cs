@@ -3,7 +3,7 @@
     internal class Card : IComparable<Card>
     {
         public char Label { get; private set; }
-        public int Power { get; private set; }
+        public int Power { get; protected set; }
 
         public Card(char label)
         {

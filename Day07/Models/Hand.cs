@@ -11,7 +11,7 @@
             string[] splittedData = data.Split(' ');
 
             foreach (char cardData in splittedData[0].Trim())
-                Cards.Add(new Card(cardData));
+                Cards.Add(CreateCard(cardData));
 
             if (Cards.Count != 5)
                 throw new Exception("Wrong card count");
@@ -38,7 +38,12 @@
             return 0;
         }
 
-        private HandType FindHandType()
+        protected virtual Card CreateCard(char cardData)
+        {
+            return new Card(cardData);
+        }
+
+        protected virtual HandType FindHandType()
         {
             HandType type;
             var groupedCards = Cards.GroupBy(c => c.Power)
