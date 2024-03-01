@@ -15,7 +15,7 @@
                 Nodes.Add(new Node(allData[i]));
         }
 
-        public long Iterate()
+        public virtual long Iterate()
         {
             string currentPosition = "AAA";
             string finalPosition = "ZZZ";
