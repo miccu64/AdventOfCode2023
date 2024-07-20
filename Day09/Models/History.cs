@@ -8,13 +8,19 @@
         {
             List<int> firstLine = data.Split(' ').Select(int.Parse).ToList();
             Differences = new() { firstLine };
+
+            DoDifferences();
+            Extrapolate();
         }
 
         public int GetLatestValue()
         {
-            DoDifferences();
-            Extrapolate();
             return Differences.First().Last();
+        }
+
+        public int GetFirstValue()
+        {
+            return Differences.First().First();
         }
 
         private void DoDifferences()
@@ -32,12 +38,14 @@
 
         private void Extrapolate()
         {
+            Differences.Last().Insert(0, 0);
             Differences.Last().Add(0);
 
             for (int i = Differences.Count - 1; i > 0; i--)
             {
                 List<int> lineLower = Differences[i];
                 List<int> lineUpper = Differences[i - 1];
+                lineUpper.Insert(0, lineUpper.First() - lineLower.First());
                 lineUpper.Add(lineLower.Last() + lineUpper.Last());
             }
         }

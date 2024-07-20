@@ -1,22 +1,25 @@
 ﻿using Day09.Models;
 
-static long GetResult(string fileName)
+static Tuple<long, long> GetResult(string fileName)
 {
-    long result = 0;
+    long resultFirst = 0;
+    long resultLast = 0;
     List<string> lines = File.ReadLines(fileName).ToList();
     foreach (string line in lines)
     {
-        result += new History(line).GetLatestValue();
+        History history = new(line);
+        resultFirst += history.GetFirstValue();
+        resultLast += history.GetLatestValue();
     }
-    return result;
+    return new Tuple<long, long>(resultFirst, resultLast);
 }
 
 string testFile = "test1.txt";
-long testResult = GetResult(testFile);
-Console.WriteLine("Test result: " + testResult);
+Tuple<long, long> testResult = GetResult(testFile);
+Console.WriteLine("Test result part 1: " + testResult.Item2);
+Console.WriteLine("Test result part 2: " + testResult.Item1);
 
 string file = "input.txt";
-long result = GetResult(file);
-Console.WriteLine("Result: " + result);
-
-
+Tuple<long, long> result = GetResult(file);
+Console.WriteLine("Result part 1: " + result.Item2);
+Console.WriteLine("Result part 2: " + result.Item1);
