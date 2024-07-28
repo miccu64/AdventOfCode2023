@@ -2,7 +2,7 @@
 {
     internal class Tile
     {
-        public int Order { get; set; }
+        public int? Order { get; set; }
 
         public SignEnum Sign { get; private set; }
         public int X { get; private set; }
@@ -16,7 +16,6 @@
         public Tile(char sign, int x, int y)
         {
             Sign = (SignEnum)sign;
-            Order = 0;
             X = x;
             Y = y;
 
@@ -56,6 +55,7 @@
                     RightConnect = true;
                     UpConnect = true;
                     DownConnect = true;
+                    Order = 0;
                     break;
             }
         }

@@ -7,8 +7,16 @@
         public Area(string fileName)
         {
             Tiles = LoadTilesFromFile(fileName);
+            TraverseForOrders();
+        }
 
+        public int FarthestTileOrder()
+        {
+            int maxOrder = Tiles.Cast<Tile>().Select(tile => tile.Order).Max() ?? -1;
+            if (maxOrder % 2 != 0)
+                throw new Exception("Wrong max order!");
 
+            return maxOrder / 2;
         }
 
         private static Tile[,] LoadTilesFromFile(string fileName)
@@ -28,25 +36,26 @@
             return tiles;
         }
 
-        private void Traverse()
+        private void TraverseForOrders()
         {
-            Tile startTile = Tiles.Cast<Tile>().Single(tile => tile.Sign == SignEnum.Start);
-            Tile previousTile = startTile;
-            Tile currentTile = FindAdjacentTile(startTile);
+            Tile previousTile = Tiles.Cast<Tile>().Single(tile => tile.Sign == SignEnum.Start);
+            Tile currentTile;
 
             do
             {
-                currentTile.Order = previousTile.Order + 1;
+                currentTile = FindAdjacentTile(previousTile);
+                //Console.WriteLine($"({previousTile.X},{previousTile.Y}) -> ({currentTile.X},{currentTile.Y})");
 
+                currentTile.Order = previousTile.Order + 1;
 
                 previousTile = currentTile;
             } while (currentTile.Sign != SignEnum.Start);
         }
 
-        private Tile FindAdjacentTile(Tile startTile)
+        private Tile FindAdjacentTile(Tile currentTile)
         {
-            int x = startTile.X;
-            int y = startTile.Y;
+            int x = currentTile.X;
+            int y = currentTile.Y;
 
             List<Tile?> adjacentTiles = new()
             {
@@ -58,8 +67,11 @@
 
             foreach (Tile? tile in adjacentTiles)
             {
-                if (tile != null && TilesConnect(startTile, tile))
+                bool canTileConnectToStartPoint = tile?.Sign == SignEnum.Start && currentTile.Order > 1;
+                if (tile != null && TilesConnect(currentTile, tile) && (tile.Order == null || canTileConnectToStartPoint))
+                {
                     return tile;
+                }
             }
 
             throw new Exception("No adjacent tile found!");
@@ -77,7 +89,7 @@
             }
         }
 
-        private bool TilesConnect(Tile tile1, Tile tile2)
+        private static bool TilesConnect(Tile tile1, Tile tile2)
         {
             int xDiff = tile2.X - tile1.X;
             int yDiff = tile2.Y - tile1.Y;
