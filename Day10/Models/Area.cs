@@ -38,18 +38,31 @@
 
         private void TraverseForOrders()
         {
-            Tile previousTile = Tiles.Cast<Tile>().Single(tile => tile.Sign == SignEnum.Start);
+            int shoelaceAlgorithm = 0;
+            Tile startTile = Tiles.Cast<Tile>().Single(tile => tile.Sign == SignEnum.Start);
+
+            Tile previousTile = startTile;
             Tile currentTile;
 
             do
             {
                 currentTile = FindAdjacentTile(previousTile);
-                //Console.WriteLine($"({previousTile.X},{previousTile.Y}) -> ({currentTile.X},{currentTile.Y})");
 
                 currentTile.Order = previousTile.Order + 1;
 
+                shoelaceAlgorithm += previousTile.X * currentTile.Y - (previousTile.Y * currentTile.X);
+
                 previousTile = currentTile;
             } while (currentTile.Sign != SignEnum.Start);
+
+            int maxOrder = FarthestTileOrder() * 2;
+            previousTile = Tiles.Cast<Tile>().Single(tile => tile.Order == maxOrder);
+            shoelaceAlgorithm += previousTile.X * currentTile.Y - (previousTile.Y * currentTile.X);
+            shoelaceAlgorithm /= 2;
+
+            int points = Tiles.Cast<Tile>().Where(tile => tile.Order != null).Count();
+            Console.WriteLine(shoelaceAlgorithm);
+            Console.WriteLine(points /2 - 1 - shoelaceAlgorithm);
         }
 
         private Tile FindAdjacentTile(Tile currentTile)
