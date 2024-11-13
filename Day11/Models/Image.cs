@@ -2,15 +2,22 @@
 {
     internal class Image
     {
-        private readonly List<Coordinate> Galaxies = [];
-        private readonly Coordinate Size = new();
+        private readonly List<Galaxy> Galaxies = [];
+        private readonly List<Tuple<Galaxy, Galaxy>> Permutations = [];
+        private readonly Galaxy Size = new();
 
         public Image(string fileName)
         {
             PopulateGalaxies(fileName);
             ExpandEmptyRowsAndColumns();
+            GetUniquePermutations();
+        }
 
-            List<Tuple<Coordinate, Coordinate>> permutations = GetUniquePermutations();
+        public int FindSumOfShortestPaths()
+        {
+            return Permutations.Select(permutation =>
+                Math.Abs(permutation.Item1.X - permutation.Item2.X) + Math.Abs(permutation.Item1.Y - permutation.Item2.Y)
+            ).Sum();
         }
 
         private void PopulateGalaxies(string fileName)
@@ -26,7 +33,7 @@
                 for (int x = 0; x < line.Length; x++)
                 {
                     if (line[x] == '#')
-                        Galaxies.Add(new Coordinate { X = x, Y = y });
+                        Galaxies.Add(new Galaxy { X = x, Y = y });
                 }
             }
         }
@@ -42,7 +49,7 @@
             for (int i = 0; i < freeX.Count; i++)
             {
                 int x = freeX[i];
-                foreach (Coordinate coordinate in Galaxies)
+                foreach (Galaxy coordinate in Galaxies)
                 {
                     if (x <= (coordinate.X - i))
                         coordinate.X++;
@@ -52,10 +59,23 @@
             for (int i = 0; i < freeY.Count; i++)
             {
                 int y = freeY[i];
-                foreach (Coordinate coordinate in Galaxies)
+                foreach (Galaxy coordinate in Galaxies)
                 {
                     if (y < coordinate.Y - i)
                         coordinate.Y++;
+                }
+            }
+        }
+
+        private void ExpandCoordinates(List<int> freeCoordinates, List<int> usedCoordinates, Action<Galaxy, int> updateCoordinate)
+        {
+            for (int i = 0; i < freeCoordinates.Count; i++)
+            {
+                int x = freeCoordinates[i];
+                foreach (Galaxy galaxy in Galaxies)
+                {
+                    if (x <= (galaxy.X - i))
+                        galaxy.X++;
                 }
             }
         }
@@ -73,22 +93,18 @@
             return freeNumbers;
         }
 
-        private List<Tuple<Coordinate, Coordinate>> GetUniquePermutations()
+        private void GetUniquePermutations()
         {
-            List<Tuple<Coordinate, Coordinate>> uniquePermutations = [];
-
-            foreach (Coordinate coordinate in Galaxies)
+            foreach (Galaxy coordinate in Galaxies)
             {
-                List<Coordinate> galaxiesWithFartherCoordinates = Galaxies.Where(galaxy =>
+                List<Galaxy> galaxiesWithFartherCoordinates = Galaxies.Where(galaxy =>
                     coordinate.Y < galaxy.Y || (coordinate.Y == galaxy.Y && coordinate.X < galaxy.X)
                 ).ToList();
 
-                uniquePermutations.AddRange(galaxiesWithFartherCoordinates.Select(galaxy =>
-                    new Tuple<Coordinate, Coordinate>(coordinate, galaxy))
+                Permutations.AddRange(galaxiesWithFartherCoordinates.Select(galaxy =>
+                    new Tuple<Galaxy, Galaxy>(coordinate, galaxy))
                 );
             }
-
-            return uniquePermutations;
         }
     }
 }
