@@ -2,22 +2,34 @@
 {
     internal class Image
     {
+        protected readonly int ExpandRatio;
+
         private readonly List<Galaxy> Galaxies = [];
         private readonly List<Tuple<Galaxy, Galaxy>> Permutations = [];
         private readonly Galaxy Size = new();
 
-        public Image(string fileName)
+        public Image(string fileName, int expandRatio)
         {
+            ExpandRatio = expandRatio - 1;
+
             PopulateGalaxies(fileName);
             ExpandEmptyRowsAndColumns();
             GetUniquePermutations();
         }
 
-        public int FindSumOfShortestPaths()
+        public ulong FindSumOfShortestPaths()
         {
-            return Permutations.Select(permutation =>
-                Math.Abs(permutation.Item1.X - permutation.Item2.X) + Math.Abs(permutation.Item1.Y - permutation.Item2.Y)
-            ).Sum();
+            ulong result = 0;
+            foreach (var permutation in Permutations)
+                result += AbsSubtract(permutation.Item1.X, permutation.Item2.X) + AbsSubtract(permutation.Item1.Y, permutation.Item2.Y);
+
+            return result;
+        }
+
+        private static ulong AbsSubtract(int item1, int item2)
+        {
+            long result = item1 - item2;
+            return (ulong)(result >= 0 ? result : result * (-1));
         }
 
         private void PopulateGalaxies(string fileName)
@@ -46,37 +58,22 @@
             List<int> usedY = Galaxies.Select(galaxy => galaxy.Y).Distinct().ToList();
             List<int> freeY = FindFreeNumbers(usedY, Size.Y);
 
-            for (int i = 0; i < freeX.Count; i++)
+            List<Tuple<int, int>> xyToAdd = [];
+
+            foreach (Galaxy galaxy in Galaxies)
             {
-                int x = freeX[i];
-                foreach (Galaxy coordinate in Galaxies)
-                {
-                    if (x <= (coordinate.X - i))
-                        coordinate.X++;
-                }
+                int earlierFreeXCount = freeX.Count(x => x < galaxy.X);
+                int earlierFreeYCount = freeY.Count(y => y < galaxy.Y);
+
+                xyToAdd.Add(new Tuple<int, int>(earlierFreeXCount, earlierFreeYCount));
             }
 
-            for (int i = 0; i < freeY.Count; i++)
+            for (int i = 0; i < Galaxies.Count; i++)
             {
-                int y = freeY[i];
-                foreach (Galaxy coordinate in Galaxies)
-                {
-                    if (y < coordinate.Y - i)
-                        coordinate.Y++;
-                }
-            }
-        }
-
-        private void ExpandCoordinates(List<int> freeCoordinates, List<int> usedCoordinates, Action<Galaxy, int> updateCoordinate)
-        {
-            for (int i = 0; i < freeCoordinates.Count; i++)
-            {
-                int x = freeCoordinates[i];
-                foreach (Galaxy galaxy in Galaxies)
-                {
-                    if (x <= (galaxy.X - i))
-                        galaxy.X++;
-                }
+                Galaxy galaxy = Galaxies[i];
+                Tuple<int, int> xy = xyToAdd[i];
+                galaxy.X += xy.Item1 * ExpandRatio;
+                galaxy.Y += xy.Item2 * ExpandRatio;
             }
         }
 
