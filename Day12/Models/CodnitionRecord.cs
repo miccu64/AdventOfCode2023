@@ -2,13 +2,16 @@
 {
     internal class ConditionRecord
     {
-        private readonly List<Line> _lines = [];
+        private readonly ICollection<Line> _lines;
 
         public ConditionRecord(string fileName)
         {
-            IEnumerable<string> fileLines = File.ReadLines(fileName);
-            foreach (string fileLine in fileLines)
-                _lines.Add(new Line(fileLine));
+            _lines = File.ReadLines(fileName).Select(CreateLine).ToList();
+        }
+
+        protected virtual Line CreateLine(string fileLine)
+        {
+            return new Line(fileLine);
         }
 
         public int SumArrangements()

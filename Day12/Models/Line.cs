@@ -4,8 +4,8 @@
     {
         public readonly int ArrangementsCount;
 
-        private readonly List<bool?> _springsStatuses;
-        private readonly List<int> _damagedGroups;
+        private readonly IList<bool?> _springsStatuses;
+        private readonly IList<int> _damagedGroups;
 
         public Line(string line)
         {
@@ -17,7 +17,7 @@
             ArrangementsCount = GetArrangementsCount();
         }
 
-        private static List<bool?> GetSpringsStatuses(string data)
+        protected virtual IList<bool?> GetSpringsStatuses(string data)
         {
             List<bool?> statuses = [];
 
@@ -35,7 +35,7 @@
             return statuses;
         }
 
-        private static List<int> GetDamagedGroups(string data)
+        protected virtual IList<int> GetDamagedGroups(string data)
         {
             return data.Split(',').Select(int.Parse).ToList();
         }
@@ -49,10 +49,10 @@
             return GetArrangementsCount(unknownSpringsIds, _springsStatuses);
         }
 
-        private int GetArrangementsCount(ICollection<int> previousUnknownSpringsIds, ICollection<bool?> previousStatuses)
+        private int GetArrangementsCount(IList<int> previousUnknownSpringsIds, IList<bool?> previousStatuses)
         {
             if (previousUnknownSpringsIds.Count == 0)
-                return IsProperArrangement(previousStatuses) ? 1 : 0;
+                return IsProperArrangement(previousStatuses) == true ? 1 : 0;
 
             Queue<int> remainingUnknownSpringsIds = new(previousUnknownSpringsIds);
             int unknownId = remainingUnknownSpringsIds.Dequeue();
@@ -63,23 +63,30 @@
                 List<bool?> currentStatuses = new(previousStatuses);
                 currentStatuses[unknownId] = value;
 
+                if (IsProperArrangement(currentStatuses) == false)
+                    return 0;
+
                 return GetArrangementsCount(remainingUnknownSpringsIds.ToList(), currentStatuses);
             });
         }
 
-        private bool IsProperArrangement(ICollection<bool?> statuses)
+        private bool? IsProperArrangement(IList<bool?> statuses)
         {
             List<int> damagedInRowCounts = [];
 
             int damagedInRowCount = 0;
-            foreach (bool? status in statuses)
+            for (int i = 0; i < statuses.Count; i++)
             {
+                bool? status = statuses[i];
+
                 if (status == null)
-                    throw new ArgumentException("Found unknown status.");
+                    return AreDamagedGroupsStartingWith(damagedInRowCounts) ? null : false;
 
                 if (status.Value)
                 {
-                    damagedInRowCounts.Add(damagedInRowCount);
+                    if (damagedInRowCount > 0)
+                        damagedInRowCounts.Add(damagedInRowCount);
+
                     damagedInRowCount = 0;
                 }
                 else
@@ -88,9 +95,24 @@
                 }
             }
 
-            damagedInRowCounts.Add(damagedInRowCount);
+            if (damagedInRowCount > 0)
+                damagedInRowCounts.Add(damagedInRowCount);
 
-            return damagedInRowCounts.Where(count => count > 0).SequenceEqual(_damagedGroups);
+            return damagedInRowCounts.SequenceEqual(_damagedGroups);
+        }
+
+        private bool AreDamagedGroupsStartingWith(IList<int> subvalues)
+        {
+            if (subvalues.Count > _damagedGroups.Count)
+                return false;
+
+            for (int i = 0; i < subvalues.Count; i++)
+            {
+                if (_damagedGroups[i] != subvalues[i])
+                    return false;
+            }
+
+            return true;
         }
     }
 }
