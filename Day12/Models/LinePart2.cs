@@ -10,7 +10,12 @@
 
             List<bool?> unfoldedStatuses = [];
             for (int i = 0; i < _multiplier; i++)
+            {
                 unfoldedStatuses.AddRange(statuses);
+                unfoldedStatuses.Add(null);
+            }
+
+            unfoldedStatuses.RemoveAt(unfoldedStatuses.Count - 1);
 
             return unfoldedStatuses;
         }
