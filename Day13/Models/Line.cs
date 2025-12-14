@@ -6,7 +6,8 @@ public class Line
 
     public Line(string text)
     {
-        if (text.Length > 32)
+        const int intBitsCount = 32;
+        if (text.Length > intBitsCount)
             throw new ArgumentOutOfRangeException(nameof(text));
 
         int hash = 0;
