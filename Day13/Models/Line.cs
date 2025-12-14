@@ -4,21 +4,23 @@ public class Line
 {
     public int Hash { get; }
 
-    public Line(IList<char> chars)
+    public Line(string text)
     {
-        if (chars.Count > 32)
-            throw new ArgumentOutOfRangeException(nameof(chars));
+        if (text.Length > 32)
+            throw new ArgumentOutOfRangeException(nameof(text));
 
         int hash = 0;
 
-        for (int pos = chars.Count - 1; pos >= 0; pos++)
+        for (int pos = 0; pos < text.Length; pos++)
         {
-            hash += chars[pos] switch
+            bool isRock = text[pos] switch
             {
-                '#' => 1,
-                '.' => 0,
+                '#' => true,
+                '.' => false,
                 _ => throw new ArgumentException("Unsupported char")
             };
+            if (isRock)
+                hash |= 1 << pos;
         }
 
         Hash = hash;
