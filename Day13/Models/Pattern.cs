@@ -57,23 +57,26 @@ public class Pattern
         horizontalResult = FindReflection(_horizontalLines);
         verticalResult = FindReflection(_verticalLines);
 
-        return Math.Max(horizontalResult, verticalResult);
+        return horizontalResult > verticalResult
+            ? horizontalResult * 100
+            : verticalResult;
     }
 
     private static int FindReflection(List<Line> lines)
     {
         List<int> allReflections = [];
 
-        for (int leftIndex = 0; leftIndex < lines.Count - 1; leftIndex++)
+        for (int startIndex = 0; startIndex < lines.Count - 1; startIndex++)
         {
-            int leftLinesCount = leftIndex;
-            int rightLinesCount = lines.Count - leftIndex - 1;
+            int leftLinesCount = startIndex + 1;
+            int rightLinesCount = lines.Count - startIndex - 1;
             int linesFromBothSidesCount = Math.Min(leftLinesCount, rightLinesCount);
 
             bool isReflection = true;
             for (int bothSidesDiff = 0; bothSidesDiff < linesFromBothSidesCount; bothSidesDiff++)
             {
-                int rightIndex = leftIndex + 1 + bothSidesDiff;
+                int leftIndex = startIndex - bothSidesDiff;
+                int rightIndex = startIndex + 1 + bothSidesDiff;
                 if (lines[leftIndex].Hash != lines[rightIndex].Hash)
                 {
                     isReflection = false;
@@ -82,7 +85,7 @@ public class Pattern
             }
 
             if (isReflection)
-                allReflections.Add(leftLinesCount);
+                allReflections.Add(leftLinesCount - 1);
         }
 
         return allReflections.Count == 0
