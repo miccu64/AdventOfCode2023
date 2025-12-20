@@ -3,8 +3,7 @@ namespace Day14.Models;
 public class Platform
 {
     protected readonly CellType[,] Cells;
-    protected readonly int XLength;
-    protected readonly int YLength;
+    protected readonly int Length;
 
     public Platform(string fileName)
     {
@@ -20,8 +19,7 @@ public class Platform
             }
         }
 
-        XLength = Cells.GetLength(1);
-        YLength = Cells.GetLength(0);
+        Length = Cells.GetLength(0);
     }
 
     public long GetWeightAfterTiltNorth()
@@ -34,13 +32,13 @@ public class Platform
     {
         long weight = 0;
 
-        for (int x = 0; x < XLength; x++)
+        for (int x = 0; x < Length; x++)
         {
-            for (int y = 0; y < YLength; y++)
+            for (int y = 0; y < Length; y++)
             {
                 CellType cell = Cells[y, x];
                 if (cell == CellType.MovableRock)
-                    weight += YLength - y;
+                    weight += Length - y;
             }
         }
 
@@ -49,20 +47,20 @@ public class Platform
 
     protected void TiltNorth()
     {
-        for (int x = 0; x < XLength; x++)
+        for (int x = 0; x < Length; x++)
         {
             int latestUsedY = -1;
-            for (int y = 0; y < YLength; y++)
+            for (int y = 0; y < Length; y++)
             {
-                CellType cell = Cells[y, x];
+                CellType cell = GetCellForTilt(y, x);
                 switch (cell)
                 {
                     case CellType.Empty:
                         continue;
                     case CellType.MovableRock:
                         latestUsedY++;
-                        Cells[y, x] = CellType.Empty;
-                        Cells[latestUsedY, x] = CellType.MovableRock;
+                        SetCellForTilt(y, x, CellType.Empty);
+                        SetCellForTilt(latestUsedY, x, CellType.MovableRock);
                         break;
                     case CellType.FixedRock:
                         latestUsedY = y;
@@ -72,6 +70,16 @@ public class Platform
                 }
             }
         }
+    }
+
+    protected virtual CellType GetCellForTilt(int y, int x)
+    {
+        return Cells[y, x];
+    }
+
+    protected virtual void SetCellForTilt(int y, int x, CellType cell)
+    {
+        Cells[y, x] = cell;
     }
 
     private static CellType GetCellType(char c)
