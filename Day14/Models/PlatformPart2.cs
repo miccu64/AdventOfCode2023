@@ -35,11 +35,17 @@ public class PlatformPart2(string fileName) : Platform(fileName)
 
     private (int y, int x) GetYXForTilt(int y, int x)
     {
-        // TODO: implement
+        // x1 = x * cos(fi) - y * sin(fi)
+        // y1 = y * cos(fi) + x * sin(fi)
+        // after rotation needed shift relative to length
+        int shift = Length - 1;
         return _nextTiltDirection switch
         {
             TiltDirection.North => (y, x),
-            TiltDirection.West => (Length - 1 - y, x)
+            TiltDirection.West => (-x + shift, y),
+            TiltDirection.South => (-y + shift, -x + shift),
+            TiltDirection.East => (x, -y + shift),
+            _ => throw new ArgumentException("Not supported tilt type")
         };
     }
 }
