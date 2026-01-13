@@ -2,18 +2,15 @@ namespace Day15.Models.Part2;
 
 public class BoxesWrapper
 {
+    private readonly IReadOnlyList<Box> _boxes;
+    
     public BoxesWrapper()
     {
-        List<Box> boxes = [];
-
         const int boxesCount = 256;
-        for (int i = 0; i < boxesCount; i++)
-            boxes.Add(new Box(i));
-
-        Boxes = boxes;
+        _boxes = Enumerable.Range(0, boxesCount)
+            .Select(x => new Box(x))
+            .ToList();
     }
-
-    public IReadOnlyList<Box> Boxes { get; }
 
     public long Process(string text)
     {
@@ -36,14 +33,14 @@ public class BoxesWrapper
             }
         }
 
-        return Boxes.Sum(box => (long)box.Lenses.Index()
+        return _boxes.Sum(box => (long)box.Lenses.Index()
             .Sum(x => (box.Index + 1) * (x.Index + 1) * x.Item.FocalLength)
         );
     }
 
     private void DashOperation(Step step)
     {
-        Box box = Boxes[step.BoxId];
+        Box box = _boxes[step.BoxId];
         Lens? lensWithSameLabel = box.Lenses.SingleOrDefault(l => l.Label == step.Label);
         if (lensWithSameLabel == null)
             return;
@@ -54,17 +51,17 @@ public class BoxesWrapper
 
     private void EqualsOperation(Step step)
     {
-        Box box = Boxes[step.BoxId];
+        Box box = _boxes[step.BoxId];
+        Lens lensToAdd = new(step.Label, step.FocalLength);
+        
         int? indexOfLensWithSameLabel = box.Lenses.Index()
             .Where(x => x.Item.Label == step.Label)
             .Select(x => (int?)x.Index)
             .SingleOrDefault();
 
-        Lens lensToAdd = new(step.Label, step.FocalLength);
-
         if (indexOfLensWithSameLabel != null)
             box.Lenses[indexOfLensWithSameLabel.Value] = lensToAdd;
         else
-            box.Lenses = box.Lenses.Prepend(lensToAdd).ToList();
+            box.Lenses.Add(lensToAdd);
     }
 }

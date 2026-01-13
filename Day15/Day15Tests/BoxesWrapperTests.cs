@@ -5,7 +5,7 @@ namespace Day15Tests;
 public class BoxesWrapperTests
 {
     [Fact]
-    public void Test1()
+    public void Part2()
     {
         // Arrange
         BoxesWrapper boxesWrapper = new();

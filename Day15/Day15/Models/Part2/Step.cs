@@ -2,6 +2,11 @@ namespace Day15.Models.Part2;
 
 public class Step
 {
+    public string Label { get; }
+    public int FocalLength { get; }
+    public OperationType Operation { get; }
+    public int BoxId { get; }
+
     public Step(string stepText)
     {
         if (stepText.Contains('-'))
@@ -19,9 +24,4 @@ public class Step
 
         BoxId = (int)new Hasher().Hash(Label);
     }
-
-    public string Label { get; }
-    public int FocalLength { get; }
-    public OperationType Operation { get; }
-    public int BoxId { get; }
 }
