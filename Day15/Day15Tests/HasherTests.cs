@@ -1,4 +1,3 @@
-
 using Day15.Models;
 
 namespace Day15Tests;

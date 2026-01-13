@@ -3,7 +3,7 @@ namespace Day15.Models;
 public class Hasher
 {
     private const int Multiplier = 17;
-    
+
     public long Hash(string text)
     {
         return text.Split(',')

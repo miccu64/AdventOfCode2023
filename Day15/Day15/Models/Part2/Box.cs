@@ -1,8 +1,7 @@
 namespace Day15.Models.Part2;
 
-public class Box
+public class Box(int index)
 {
-    public readonly IList<Lens> Lenses = [];
-    
-    
+    public int Index { get; } = index;
+    public IList<Lens> Lenses { get; set; } = [];
 }
