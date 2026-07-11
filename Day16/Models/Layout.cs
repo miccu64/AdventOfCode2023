@@ -25,7 +25,7 @@ public class Layout
     {
         Traverse(-1, 0, Direction.Right);
 
-        return _layout.Cast<Point>().Count(point => point.IsEnergized);
+        return _layout.Cast<Point>().Count(point => point.IsEnergized());
     }
 
     private void Traverse(int startX, int startY, Direction direction)
@@ -36,7 +36,9 @@ public class Layout
         while (nextPointInfo != null)
         {
             Console.WriteLine($"Current point: {nextPointInfo.Value.x}, {nextPointInfo.Value.y}, {direction}");
-            nextPointInfo.Value.point.Energize();
+
+            if (!nextPointInfo.Value.point.TryEnergize(direction))
+                break;
 
             PointType nextPointType = nextPointInfo.Value.point.Type;
 

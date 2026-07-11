@@ -1,10 +1,10 @@
 namespace Day16.Models;
 
+[Flags]
 public enum Direction
 {
-    // TODO: byte-wise direction and recognizing if already this direction was checked (if yes - stop)
-    Up,
-    Down,
-    Left,
-    Right
+    Up = 1,
+    Down = 2,
+    Left = 4,
+    Right = 8
 }

@@ -6,10 +6,16 @@ public class Point(char c)
 {
     public PointType Type { get; } = c.ToPointType();
 
-    public bool IsEnergized { get; private set; }
+    private Direction EnergizedDirections { get; set; }
 
-    public void Energize()
+    public bool TryEnergize(Direction direction)
     {
-        IsEnergized = true;
+        if (EnergizedDirections.HasFlag(direction))
+            return false;
+
+        EnergizedDirections |= direction;
+        return true;
     }
+
+    public bool IsEnergized() => EnergizedDirections > 0;
 }
