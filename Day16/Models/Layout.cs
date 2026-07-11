@@ -50,7 +50,7 @@ public class Layout
             {
                 // nothing
             }
-            else if (nextPointType == PointType.LeftToRightMirror)
+            else if (nextPointType == PointType.SlashMirror)
             {
                 direction = direction switch
                 {
@@ -61,7 +61,7 @@ public class Layout
                     _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
                 };
             }
-            else if (nextPointType == PointType.RightToLeftMirror)
+            else if (nextPointType == PointType.BackslashMirror)
             {
                 direction = direction switch
                 {
@@ -109,7 +109,7 @@ public class Layout
         };
         try
         {
-            Point point = _layout[newCoordinates.x, newCoordinates.y];
+            Point point = _layout[newCoordinates.y, newCoordinates.x];
             return (point, newCoordinates.x, newCoordinates.y);
         }
         catch (IndexOutOfRangeException)
