@@ -1,3 +1,5 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using Day16.Models;
 
-Console.WriteLine("Hello, World!");
+Layout testLayout1 = new("TestData1.txt");
+int testResult1 = testLayout1.Traverse();
+Console.WriteLine($"TestResult1: {testResult1}, expected: 46");

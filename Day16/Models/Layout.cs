@@ -21,9 +21,11 @@ public class Layout
         }
     }
 
-    public void Traverse()
+    public int Traverse()
     {
         Traverse(-1, 0, Direction.Right);
+
+        return _layout.Cast<Point>().Count(point => point.IsEnergized);
     }
 
     private void Traverse(int startX, int startY, Direction direction)
@@ -33,6 +35,7 @@ public class Layout
         (Point point, int x, int y)? nextPointInfo = TryGetNextPoint(startX, startY, direction);
         while (nextPointInfo != null)
         {
+            Console.WriteLine($"Current point: {nextPointInfo.Value.x}, {nextPointInfo.Value.y}, {direction}");
             nextPointInfo.Value.point.Energize();
 
             PointType nextPointType = nextPointInfo.Value.point.Type;
@@ -45,7 +48,7 @@ public class Layout
 
             if (noChanges)
             {
-                nextPointInfo = TryGetNextPoint(startX, startY, direction);
+                // nothing
             }
             else if (nextPointType == PointType.LeftToRightMirror)
             {
@@ -71,14 +74,18 @@ public class Layout
             }
             else if (nextPointType == PointType.HorizontalSplitter)
             {
-                pendingTraversions.Add(TraverseTask(nextPointInfo.Value.x, nextPointInfo.Value.y, Direction.Up));
-                pendingTraversions.Add(TraverseTask(nextPointInfo.Value.x, nextPointInfo.Value.y, Direction.Down));
+                pendingTraversions.Add(TraverseTask(nextPointInfo.Value.x, nextPointInfo.Value.y, Direction.Right));
+
+                direction = Direction.Left;
             }
             else if (nextPointType == PointType.VerticalSplitter)
             {
-                pendingTraversions.Add(TraverseTask(nextPointInfo.Value.x, nextPointInfo.Value.y, Direction.Left));
-                pendingTraversions.Add(TraverseTask(nextPointInfo.Value.x, nextPointInfo.Value.y, Direction.Right));
+                pendingTraversions.Add(TraverseTask(nextPointInfo.Value.x, nextPointInfo.Value.y, Direction.Down));
+
+                direction = Direction.Up;
             }
+
+            nextPointInfo = TryGetNextPoint(nextPointInfo.Value.x, nextPointInfo.Value.y, direction);
         }
 
         Task.WaitAll(pendingTraversions);
@@ -86,6 +93,7 @@ public class Layout
 
     private Task TraverseTask(int startX, int startY, Direction direction)
     {
+        Console.WriteLine($"Started new Task: {startX}, {startY}, {direction}");
         return Task.Run(() => Traverse(startX, startY, direction));
     }
 
