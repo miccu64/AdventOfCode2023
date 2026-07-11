@@ -1,4 +1,6 @@
-namespace Day16.Models;
+using Day16.Models;
+
+namespace Day16;
 
 public class Layout(string fileName)
 {
