@@ -12,5 +12,10 @@ public class Point(char c)
         _ => throw new ArgumentException("Not supported char")
     };
 
-    public bool IsEnergized { get; set; } = false;
+    public bool IsEnergized { get; private set; }
+
+    public void Energize()
+    {
+        IsEnergized = true;
+    }
 }
