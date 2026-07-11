@@ -54,10 +54,10 @@ public class Layout
             {
                 direction = direction switch
                 {
-                    Direction.Up => Direction.Left,
-                    Direction.Down => Direction.Right,
-                    Direction.Left => Direction.Up,
-                    Direction.Right => Direction.Down,
+                    Direction.Up => Direction.Right,
+                    Direction.Down => Direction.Left,
+                    Direction.Left => Direction.Down,
+                    Direction.Right => Direction.Up,
                     _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
                 };
             }
@@ -65,10 +65,10 @@ public class Layout
             {
                 direction = direction switch
                 {
-                    Direction.Up => Direction.Right,
-                    Direction.Down => Direction.Left,
-                    Direction.Left => Direction.Down,
-                    Direction.Right => Direction.Up,
+                    Direction.Up => Direction.Left,
+                    Direction.Down => Direction.Right,
+                    Direction.Left => Direction.Up,
+                    Direction.Right => Direction.Down,
                     _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
                 };
             }
