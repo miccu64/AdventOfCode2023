@@ -60,8 +60,6 @@ public class Layout
 
     private void Traverse(int startX, int startY, Direction direction)
     {
-        List<Task> pendingTraversals = [];
-
         (Point point, int x, int y)? nextPointInfo = TryGetNextPoint(startX, startY, direction);
         while (nextPointInfo is { } currentPoint)
         {
@@ -98,8 +96,6 @@ public class Layout
 
             nextPointInfo = TryGetNextPoint(currentPoint.x, currentPoint.y, direction);
         }
-
-        Task.WaitAll(pendingTraversals);
     }
 
     private static Direction Reflect(PointType pointType, Direction direction) => (pointType, direction) switch
