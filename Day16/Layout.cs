@@ -2,34 +2,60 @@ using Day16.Models;
 
 namespace Day16;
 
-public class Layout(string fileName)
+public class Layout
 {
-    private readonly Point[,] _layout = LoadLayout(fileName);
+    public int XLength { get; }
+    public int YLength { get; }
+    private readonly Point[,] _layout;
 
-    public int Traverse()
+    public Layout(string fileName)
     {
-        Traverse(-1, 0, Direction.Right);
+        string[] text = File.ReadAllLines(fileName);
+
+        XLength = text[0].Length;
+        YLength = text.Length;
+
+        _layout = new Point[XLength, YLength];
+        for (int y = 0; y < YLength; y++)
+        {
+            for (int x = 0; x < XLength; x++)
+            {
+                _layout[x, y] = new Point(text[x][y]);
+            }
+        }
+    }
+
+    public int Traverse(int startX, int startY)
+    {
+        Traverse(startX, startY, GetStartDirection(startX, startY));
 
         return _layout.Cast<Point>().Count(point => point.IsEnergized());
     }
 
-    private static Point[,] LoadLayout(string fileName)
+    private Direction GetStartDirection(int x, int y)
     {
-        string[] text = File.ReadAllLines(fileName);
+        const int xMin = -1;
+        const int yMin = -1;
+        int xMax = XLength;
+        int yMax = YLength;
 
-        int xLength = text[0].Length;
-        int yLength = text.Length;
-
-        Point[,] layout = new Point[xLength, yLength];
-        for (int y = 0; y < yLength; y++)
+        if (y > yMin && y < yMax)
         {
-            for (int x = 0; x < xLength; x++)
-            {
-                layout[x, y] = new Point(text[x][y]);
-            }
+            if (x == xMin)
+                return Direction.Right;
+            if (x == xMax)
+                return Direction.Left;
         }
 
-        return layout;
+        if (x > xMin && x < xMax)
+        {
+            if (y == yMin)
+                return Direction.Down;
+            if (y == yMax)
+                return Direction.Up;
+        }
+
+        throw new InvalidOperationException();
     }
 
     private void Traverse(int startX, int startY, Direction direction)
@@ -39,8 +65,6 @@ public class Layout(string fileName)
         (Point point, int x, int y)? nextPointInfo = TryGetNextPoint(startX, startY, direction);
         while (nextPointInfo is { } currentPoint)
         {
-            Console.WriteLine($"Current point: {currentPoint.x}, {currentPoint.y}, {direction}");
-
             if (!currentPoint.point.TryEnergize(direction))
                 break;
 
@@ -80,7 +104,6 @@ public class Layout(string fileName)
 
     private Task TraverseTask(int startX, int startY, Direction direction)
     {
-        Console.WriteLine($"Started new Task: {startX}, {startY}, {direction}");
         return Task.Run(() => Traverse(startX, startY, direction));
     }
 

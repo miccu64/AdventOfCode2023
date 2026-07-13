@@ -1,10 +1,15 @@
 ﻿using Day16;
 using Day16.Models;
 
-Layout testLayout1 = new("TestData1.txt");
-int testResult1 = testLayout1.Traverse();
-Console.WriteLine($"TestResult1: {testResult1}, expected: 46");
+LayoutSummarizerPart1 testSummarizer1 = new("TestData1.txt");
+Console.WriteLine($"TestResult1: {testSummarizer1.Traverse()}, expected: 46");
 
-Layout layout1 = new("Data1.txt");
-int result1 = layout1.Traverse();
-Console.WriteLine($"Result1: {result1}");
+LayoutSummarizerPart1 layout1 = new("Data1.txt");
+Console.WriteLine($"Result1: {layout1.Traverse()}");
+
+
+LayoutSummarizerPart2 testSummarizer2 = new("TestData1.txt");
+Console.WriteLine($"TestResult2: {testSummarizer2.Traverse()}, expected: 51");
+
+LayoutSummarizerPart2 layout2 = new("Data1.txt");
+Console.WriteLine($"Result2: {layout2.Traverse()}");
