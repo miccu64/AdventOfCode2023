@@ -60,7 +60,7 @@ public class Layout
 
     private void Traverse(int startX, int startY, Direction direction)
     {
-        List<Task> pendingTraversions = [];
+        List<Task> pendingTraversals = [];
 
         (Point point, int x, int y)? nextPointInfo = TryGetNextPoint(startX, startY, direction);
         while (nextPointInfo is { } currentPoint)
@@ -84,12 +84,12 @@ public class Layout
                         direction = Reflect(nextPointType, direction);
                         break;
                     case PointType.HorizontalSplitter:
-                        pendingTraversions.Add(TraverseTask(currentPoint.x, currentPoint.y, Direction.Right));
+                        Traverse(currentPoint.x, currentPoint.y, Direction.Right);
 
                         direction = Direction.Left;
                         break;
                     case PointType.VerticalSplitter:
-                        pendingTraversions.Add(TraverseTask(currentPoint.x, currentPoint.y, Direction.Down));
+                        Traverse(currentPoint.x, currentPoint.y, Direction.Down);
 
                         direction = Direction.Up;
                         break;
@@ -99,12 +99,7 @@ public class Layout
             nextPointInfo = TryGetNextPoint(currentPoint.x, currentPoint.y, direction);
         }
 
-        Task.WaitAll(pendingTraversions);
-    }
-
-    private Task TraverseTask(int startX, int startY, Direction direction)
-    {
-        return Task.Run(() => Traverse(startX, startY, direction));
+        Task.WaitAll(pendingTraversals);
     }
 
     private static Direction Reflect(PointType pointType, Direction direction) => (pointType, direction) switch

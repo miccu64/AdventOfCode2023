@@ -1,5 +1,4 @@
 ﻿using Day16;
-using Day16.Models;
 
 LayoutSummarizerPart1 testSummarizer1 = new("TestData1.txt");
 Console.WriteLine($"TestResult1: {testSummarizer1.Traverse()}, expected: 46");
