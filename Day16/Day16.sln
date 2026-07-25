@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day16", "Day16.csproj", "{110F9EFF-5614-4AC0-82E2-0232CEFDFC4E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AocHelpers", "..\AocHelpers\AocHelpers.csproj", "{42419F9F-BA1B-423C-95D9-F4BBA549301F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{110F9EFF-5614-4AC0-82E2-0232CEFDFC4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{110F9EFF-5614-4AC0-82E2-0232CEFDFC4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{110F9EFF-5614-4AC0-82E2-0232CEFDFC4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42419F9F-BA1B-423C-95D9-F4BBA549301F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42419F9F-BA1B-423C-95D9-F4BBA549301F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42419F9F-BA1B-423C-95D9-F4BBA549301F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42419F9F-BA1B-423C-95D9-F4BBA549301F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

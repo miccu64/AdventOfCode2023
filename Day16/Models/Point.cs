@@ -1,3 +1,4 @@
+using AocHelpers.Models;
 using Day16.Extensions;
 
 namespace Day16.Models;
