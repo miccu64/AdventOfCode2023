@@ -4,40 +4,26 @@ namespace Day16;
 
 public class Layout
 {
-    public int XLength { get; }
-    public int YLength { get; }
-    private readonly Point[,] _layout;
+    private readonly Grid<Point> _grid;
 
     public Layout(string fileName)
     {
-        string[] text = File.ReadAllLines(fileName);
-
-        XLength = text[0].Length;
-        YLength = text.Length;
-
-        _layout = new Point[XLength, YLength];
-        for (int y = 0; y < YLength; y++)
-        {
-            for (int x = 0; x < XLength; x++)
-            {
-                _layout[x, y] = new Point(text[x][y]);
-            }
-        }
+        _grid = new Grid<Point>(fileName, c => new Point(c));
     }
 
     public int Traverse(int startX, int startY)
     {
         Traverse(startX, startY, GetStartDirection(startX, startY));
 
-        return _layout.Cast<Point>().Count(point => point.IsEnergized());
+        return _grid.AllPoints.Count(point => point.IsEnergized());
     }
 
     private Direction GetStartDirection(int x, int y)
     {
         const int xMin = -1;
         const int yMin = -1;
-        int xMax = XLength;
-        int yMax = YLength;
+        int xMax = _grid.Width;
+        int yMax = _grid.Height;
 
         if (y > yMin && y < yMax)
         {
@@ -60,7 +46,7 @@ public class Layout
 
     private void Traverse(int startX, int startY, Direction direction)
     {
-        (Point point, int x, int y)? nextPointInfo = TryGetNextPoint(startX, startY, direction);
+        (Point point, int x, int y)? nextPointInfo = _grid.TryTraverse(startX, startY, direction);
         while (nextPointInfo is { } currentPoint)
         {
             if (!currentPoint.point.TryEnergize(direction))
@@ -94,7 +80,7 @@ public class Layout
                 }
             }
 
-            nextPointInfo = TryGetNextPoint(currentPoint.x, currentPoint.y, direction);
+            nextPointInfo = _grid.TryTraverse(currentPoint.x, currentPoint.y, direction);
         }
     }
 
@@ -112,25 +98,4 @@ public class Layout
 
         _ => throw new InvalidOperationException()
     };
-
-    private (Point point, int x, int y)? TryGetNextPoint(int x, int y, Direction direction)
-    {
-        (int x, int y) newCoordinates = direction switch
-        {
-            Direction.Up => (x, y - 1),
-            Direction.Down => (x, y + 1),
-            Direction.Left => (x - 1, y),
-            Direction.Right => (x + 1, y),
-            _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
-        };
-        try
-        {
-            Point point = _layout[newCoordinates.y, newCoordinates.x];
-            return (point, newCoordinates.x, newCoordinates.y);
-        }
-        catch (IndexOutOfRangeException)
-        {
-            return null;
-        }
-    }
 }

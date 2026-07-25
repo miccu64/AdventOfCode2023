@@ -1,12 +1,14 @@
+using Day16.Models;
+
 namespace Day16;
 
 public class LayoutSummarizerPart2(string fileName)
 {
     public int Traverse()
     {
-        Layout tempLayout = new(fileName);
-        int xLength = tempLayout.XLength;
-        int yLength = tempLayout.YLength;
+        Grid<Point?> tempLayout = new(fileName, _ => null);
+        int xLength = tempLayout.Width;
+        int yLength = tempLayout.Height;
 
         List<(int x, int y)> startPoints =
             GenerateSingleDimensionStarts(xLength).Select(x => (x, -1))
