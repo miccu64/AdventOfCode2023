@@ -32,7 +32,7 @@ namespace AocHelpers
             }
         }
 
-        public (T point, int x, int y)? TryTraverse(int x, int y, Direction direction)
+        public PointInfo<T>? TryTraverse(int x, int y, Direction direction)
         {
             (int x, int y) newCoordinates = direction switch
             {
@@ -49,7 +49,7 @@ namespace AocHelpers
                 return null;
 
             T point = this[newCoordinates.x, newCoordinates.y];
-            return (point, newCoordinates.x, newCoordinates.y);
+            return new PointInfo<T>(point, newCoordinates.x, newCoordinates.y, direction);
         }
     }
 }
