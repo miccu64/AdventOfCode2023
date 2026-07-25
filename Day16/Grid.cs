@@ -38,14 +38,13 @@ public class Grid<T>
             Direction.Right => (x + 1, y),
             _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
         };
-        try
-        {
-            T point = this[newCoordinates.x, newCoordinates.y];
-            return (point, newCoordinates.x, newCoordinates.y);
-        }
-        catch (IndexOutOfRangeException)
-        {
+
+        bool isOutOfBounds = newCoordinates.x < 0 || newCoordinates.x >= Width || newCoordinates.y < 0 ||
+                             newCoordinates.y >= Height;
+        if (isOutOfBounds)
             return null;
-        }
+
+        T point = this[newCoordinates.x, newCoordinates.y];
+        return (point, newCoordinates.x, newCoordinates.y);
     }
 }
