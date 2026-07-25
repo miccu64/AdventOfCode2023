@@ -48,13 +48,13 @@ public class Layout
 
     private void Traverse(int startX, int startY, Direction direction)
     {
-        (Point point, int x, int y)? nextPointInfo = _grid.TryTraverse(startX, startY, direction);
+        PointInfo<Point>? nextPointInfo = _grid.TryTraverse(startX, startY, direction);
         while (nextPointInfo is { } currentPoint)
         {
-            if (!currentPoint.point.TryEnergize(direction))
+            if (!currentPoint.Point.TryEnergize(direction))
                 break;
 
-            PointType nextPointType = currentPoint.point.Type;
+            PointType nextPointType = currentPoint.Point.Type;
 
             bool directionChangesNeeded = !(nextPointType == PointType.EmptySpace
                                             || (nextPointType == PointType.HorizontalSplitter &&
@@ -70,19 +70,19 @@ public class Layout
                         direction = Reflect(nextPointType, direction);
                         break;
                     case PointType.HorizontalSplitter:
-                        Traverse(currentPoint.x, currentPoint.y, Direction.Right);
+                        Traverse(currentPoint.X, currentPoint.Y, Direction.Right);
 
                         direction = Direction.Left;
                         break;
                     case PointType.VerticalSplitter:
-                        Traverse(currentPoint.x, currentPoint.y, Direction.Down);
+                        Traverse(currentPoint.X, currentPoint.Y, Direction.Down);
 
                         direction = Direction.Up;
                         break;
                 }
             }
 
-            nextPointInfo = _grid.TryTraverse(currentPoint.x, currentPoint.y, direction);
+            nextPointInfo = _grid.TryTraverse(currentPoint.X, currentPoint.Y, direction);
         }
     }
 
