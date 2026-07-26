@@ -25,7 +25,7 @@ public class CostMap
             {
                 ExtendedPointInfo<Cell>? nextCellInfo =
                     _grid.TryTraverse(currentCellInfo.X, currentCellInfo.Y, direction);
-                if (nextCellInfo == null || !nextCellInfo.Point.Queue.CanTraverse(nextCellInfo.UsedDirection))
+                if (nextCellInfo == null || !currentCellInfo.Point.Queue.CanTraverse(nextCellInfo.UsedDirection))
                     continue;
 
                 int newDistance = currentCellInfo.Point.DistanceFromStart + nextCellInfo.Point.Cost;
