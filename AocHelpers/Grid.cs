@@ -78,7 +78,7 @@ namespace AocHelpers
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    sb.Append(printFunc(this[x, y])).Append(' ');
+                    sb.Append(printFunc(this[x, y]).PadRight(4));
                 }
 
                 sb.AppendLine();

@@ -42,12 +42,16 @@ public class CostMap
 
             currentCellInfo.Point.IsVisited = true;
 
-            currentCellInfo = _grid.AllPoints.Where(cell => !cell.Point.IsVisited)
+            PointInfo<Cell>? lowestCellInfo = _grid.AllPoints.Where(cell => !cell.Point.IsVisited)
                 .OrderBy(cell => cell.Point.DistanceFromStart)
-                .Select(cell =>
-                    new ExtendedPointInfo<Cell>(cell.Point, cell.X, cell.Y, cell.Point.Queue.PeekLastDirection())
-                )
                 .FirstOrDefault();
+
+            currentCellInfo = lowestCellInfo == null
+                ? null
+                : new ExtendedPointInfo<Cell>(
+                    lowestCellInfo.Point, lowestCellInfo.X, lowestCellInfo.Y,
+                    lowestCellInfo.Point.Queue.PeekLastDirection()
+                );
 
             _grid.PrintGridToConsole(c => c.DistanceFromStart.ToString());
         }
