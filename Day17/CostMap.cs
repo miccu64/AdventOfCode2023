@@ -45,6 +45,8 @@ public class CostMap
                 
                 currentCellInfo.Point.IsVisited = true;
             }
+            
+            _grid.PrintGridToConsole(c => c.DistanceFromStart.ToString());
 
             currentCellInfo = optimalCellInfo;
         }

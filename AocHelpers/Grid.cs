@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using AocHelpers.Models;
 
 namespace AocHelpers
@@ -32,6 +33,10 @@ namespace AocHelpers
             }
         }
 
+        /// <summary>
+        /// Try to traverse in given direction by 1 field in given direction.
+        /// </summary>
+        /// <returns>PointInfo if traversal possible; null when coordinates out of bounds.</returns>
         public PointInfo<T>? TryTraverse(int x, int y, Direction direction)
         {
             (int x, int y) newCoordinates = direction switch
@@ -50,6 +55,27 @@ namespace AocHelpers
 
             T point = this[newCoordinates.x, newCoordinates.y];
             return new PointInfo<T>(point, newCoordinates.x, newCoordinates.y, direction);
+        }
+
+        /// <summary>
+        /// Prints grid to console for debugging purposes.
+        /// </summary>
+        /// <param name="printFunc">Function stating what should be printed.</param>
+        public void PrintGridToConsole(Func<T, string> printFunc)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    sb.Append(printFunc(this[x, y])).Append(' ');
+                }
+
+                sb.AppendLine();
+            }
+
+            Console.WriteLine(sb.ToString());
         }
     }
 }
