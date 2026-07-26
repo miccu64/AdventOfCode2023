@@ -11,7 +11,7 @@ public class LatestDirectionsQueue
     public bool CanTraverse(Direction direction)
     {
         Direction? latestDirection = _directions.LastOrDefault();
-        if (latestDirection?.IsOppositeDirection(direction) == true)
+        if (direction.IsOppositeDirection(latestDirection))
             return false;
 
         bool incompleteQueue = _directions.Count < ImportantHistoryCount;

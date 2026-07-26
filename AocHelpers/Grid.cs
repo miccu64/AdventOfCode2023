@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using AocHelpers.Models;
 
@@ -13,7 +12,10 @@ namespace AocHelpers
 
         public int Width => _layout.GetLength(0);
         public int Height => _layout.GetLength(1);
+
         public IReadOnlyList<PointInfo<T>> AllPoints { get; }
+
+        // jagged arrays takes [Y, X] dimensions 
         public T this[int x, int y] => _layout[y, x];
 
         public Grid(string fileName, Func<char, T> cellBuilder)
@@ -25,13 +27,13 @@ namespace AocHelpers
 
             List<PointInfo<T>> points = new List<PointInfo<T>>();
 
-            _layout = new T[width, height];
+            _layout = new T[height, width];
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    T cell = cellBuilder(text[x][y]);
-                    _layout[x, y] = cell;
+                    T cell = cellBuilder(text[y][x]);
+                    _layout[y, x] = cell;
 
                     points.Add(new PointInfo<T>(cell, x, y));
                 }
