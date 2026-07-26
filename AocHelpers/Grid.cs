@@ -13,7 +13,7 @@ namespace AocHelpers
 
         public int Width => _layout.GetLength(0);
         public int Height => _layout.GetLength(1);
-        public IEnumerable<T> AllPoints => _layout.Cast<T>();
+        public IReadOnlyList<PointInfo<T>> AllPoints { get; }
         public T this[int x, int y] => _layout[y, x];
 
         public Grid(string fileName, Func<char, T> cellBuilder)
@@ -23,21 +23,28 @@ namespace AocHelpers
             int width = text[0].Length;
             int height = text.Length;
 
+            List<PointInfo<T>> points = new List<PointInfo<T>>();
+
             _layout = new T[width, height];
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    _layout[x, y] = cellBuilder(text[x][y]);
+                    T cell = cellBuilder(text[x][y]);
+                    _layout[x, y] = cell;
+
+                    points.Add(new PointInfo<T>(cell, x, y));
                 }
             }
+
+            AllPoints = points;
         }
 
         /// <summary>
         /// Try to traverse in given direction by 1 field in given direction.
         /// </summary>
-        /// <returns>PointInfo if traversal possible; null when coordinates out of bounds.</returns>
-        public PointInfo<T>? TryTraverse(int x, int y, Direction direction)
+        /// <returns>ExtendedPointInfo if traversal possible; null when coordinates out of bounds.</returns>
+        public ExtendedPointInfo<T>? TryTraverse(int x, int y, Direction direction)
         {
             (int x, int y) newCoordinates = direction switch
             {
@@ -54,7 +61,7 @@ namespace AocHelpers
                 return null;
 
             T point = this[newCoordinates.x, newCoordinates.y];
-            return new PointInfo<T>(point, newCoordinates.x, newCoordinates.y, direction);
+            return new ExtendedPointInfo<T>(point, newCoordinates.x, newCoordinates.y, direction);
         }
 
         /// <summary>
