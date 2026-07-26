@@ -17,7 +17,7 @@ public class Layout
     {
         Traverse(startX, startY, GetStartDirection(startX, startY));
 
-        return _grid.AllPoints.Count(point => point.IsEnergized());
+        return _grid.AllPoints.Count(point => point.Point.IsEnergized());
     }
 
     private Direction GetStartDirection(int x, int y)
