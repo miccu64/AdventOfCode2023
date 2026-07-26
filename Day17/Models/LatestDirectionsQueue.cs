@@ -1,3 +1,4 @@
+using AocHelpers.Extensions;
 using AocHelpers.Models;
 
 namespace Day17.Models;
@@ -9,6 +10,10 @@ public class LatestDirectionsQueue
 
     public bool CanTraverse(Direction direction)
     {
+        Direction? latestDirection = _directions.LastOrDefault();
+        if (latestDirection?.IsOppositeDirection(direction) == true)
+            return false;
+
         bool incompleteQueue = _directions.Count < ImportantHistoryCount;
         if (incompleteQueue)
             return true;
