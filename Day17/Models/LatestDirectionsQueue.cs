@@ -11,22 +11,9 @@ public class MultipleLatestDirectionsQueuesWrapper
         MultipleLatestDirectionsQueuesWrapper multiQueueToCopy,
         Direction direction)
     {
-        _directionQueues = _directionQueues.Union(
-            multiQueueToCopy._directionQueues.Select(q =>
-                {
-                    LatestDirectionsQueue clone = (LatestDirectionsQueue)q.Clone();
-                    clone.EnqueueWithoutOverflow(direction);
-                    return clone;
-                })
-                .Distinct()
-        ).ToList();
-    }
-
-    public void ReplaceMultipleDirections(
-        MultipleLatestDirectionsQueuesWrapper multiQueueToCopy,
-        Direction direction)
-    {
-        _directionQueues = multiQueueToCopy._directionQueues.Select(q =>
+        List<LatestDirectionsQueue> queuesToAdd = multiQueueToCopy._directionQueues
+            .Where(q => q.CanTraverse(direction))
+            .Select(q =>
             {
                 LatestDirectionsQueue clone = (LatestDirectionsQueue)q.Clone();
                 clone.EnqueueWithoutOverflow(direction);
@@ -34,11 +21,42 @@ public class MultipleLatestDirectionsQueuesWrapper
             })
             .Distinct()
             .ToList();
+
+        if (queuesToAdd.Count == 0)
+            throw new InvalidOperationException("No directions to add available");
+
+        _directionQueues = _directionQueues.Union(queuesToAdd).ToList();
+    }
+
+    public void ReplaceMultipleDirections(
+        MultipleLatestDirectionsQueuesWrapper multiQueueToCopy,
+        Direction direction)
+    {
+        _directionQueues = multiQueueToCopy._directionQueues
+            .Where(q => q.CanTraverse(direction))
+            .Select(q =>
+            {
+                LatestDirectionsQueue clone = (LatestDirectionsQueue)q.Clone();
+                clone.EnqueueWithoutOverflow(direction);
+                return clone;
+            })
+            .Distinct()
+            .ToList();
+
+        if (_directionQueues.Count == 0)
+            throw new InvalidOperationException("No more directions available");
+    }
+
+    public void InitFirst(Direction direction)
+    {
+        LatestDirectionsQueue q = new();
+        q.EnqueueWithoutOverflow(direction);
+        _directionQueues.Add(q);
     }
 
     public bool CanTraverse(Direction direction)
     {
-        return _directionQueues.Count == 0 || _directionQueues.Any(q => q.CanTraverse(direction));
+        return _directionQueues.Any(q => q.CanTraverse(direction));
     }
 }
 
@@ -89,5 +107,17 @@ public class LatestDirectionsQueue : ICloneable, IEquatable<LatestDirectionsQueu
     public bool Equals(LatestDirectionsQueue? other)
     {
         return other != null && _directions.SequenceEqual(other._directions);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as LatestDirectionsQueue);
+    }
+
+    public override int GetHashCode()
+    {
+        HashCode hash = new();
+        hash.Add(_directions.GetHashCode());
+        return hash.ToHashCode();
     }
 }

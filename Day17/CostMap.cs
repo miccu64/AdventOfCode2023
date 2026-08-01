@@ -18,6 +18,7 @@ public class CostMap
     {
         ExtendedPointInfo<Cell>? currentCellInfo = new(_grid[0, 0], 0, 0, Direction.Right);
         currentCellInfo.Point.DistanceFromStart = 0;
+        currentCellInfo.Point.QueuesWrapper.InitFirst(Direction.Right);
 
         while (currentCellInfo != null)
         {
@@ -27,7 +28,9 @@ public class CostMap
                     _grid.TryTraverse(currentCellInfo.X, currentCellInfo.Y, direction);
                 if (nextCellInfo == null ||
                     !currentCellInfo.Point.QueuesWrapper.CanTraverse(nextCellInfo.UsedDirection))
+                {
                     continue;
+                }
 
                 int newDistance = currentCellInfo.Point.DistanceFromStart + nextCellInfo.Point.Cost;
                 if (nextCellInfo.Point.DistanceFromStart == newDistance)
@@ -57,7 +60,7 @@ public class CostMap
                 ? null
                 : new ExtendedPointInfo<Cell>(
                     lowestCellInfo.Point, lowestCellInfo.X, lowestCellInfo.Y,
-                    default// unneeded
+                    default // unneeded
                 );
 
             _grid.PrintGridToConsole(c => c.DistanceFromStart.ToString());
