@@ -3,10 +3,49 @@ using AocHelpers.Models;
 
 namespace Day17.Models;
 
-public class LatestDirectionsQueue
+public class MultipleLatestDirectionsQueuesWrapper
+{
+    private List<LatestDirectionsQueue> _directionQueues = [];
+
+    public void ConcatOtherMultipleDirections(
+        MultipleLatestDirectionsQueuesWrapper multiQueueToCopy,
+        Direction direction)
+    {
+        _directionQueues = _directionQueues.Union(
+            multiQueueToCopy._directionQueues.Select(q =>
+                {
+                    LatestDirectionsQueue clone = (LatestDirectionsQueue)q.Clone();
+                    clone.EnqueueWithoutOverflow(direction);
+                    return clone;
+                })
+                .Distinct()
+        ).ToList();
+    }
+
+    public void ReplaceMultipleDirections(
+        MultipleLatestDirectionsQueuesWrapper multiQueueToCopy,
+        Direction direction)
+    {
+        _directionQueues = multiQueueToCopy._directionQueues.Select(q =>
+            {
+                LatestDirectionsQueue clone = (LatestDirectionsQueue)q.Clone();
+                clone.EnqueueWithoutOverflow(direction);
+                return clone;
+            })
+            .Distinct()
+            .ToList();
+    }
+
+    public bool CanTraverse(Direction direction)
+    {
+        return _directionQueues.Count == 0 || _directionQueues.Any(q => q.CanTraverse(direction));
+    }
+}
+
+public class LatestDirectionsQueue : ICloneable, IEquatable<LatestDirectionsQueue>
 {
     private const int ImportantHistoryCount = 3;
-    private readonly Queue<Direction> _directions = new(ImportantHistoryCount);
+    private List<Direction> _directions = new(ImportantHistoryCount);
 
     public bool CanTraverse(Direction direction)
     {
@@ -27,24 +66,28 @@ public class LatestDirectionsQueue
 
     public void EnqueueOtherDirections(LatestDirectionsQueue queueToCopy, Direction direction)
     {
-        _directions.Clear();
-
-        foreach (Direction d in queueToCopy._directions)
-            EnqueueWithoutOverflow(d);
-
+        _directions = queueToCopy._directions.ToList();
         EnqueueWithoutOverflow(direction);
     }
 
-    public Direction PeekLastDirection()
-    {
-        return _directions.Last();
-    }
-
-    private void EnqueueWithoutOverflow(Direction direction)
+    public void EnqueueWithoutOverflow(Direction direction)
     {
         if (_directions.Count == 3)
-            _directions.Dequeue();
+            _directions.RemoveAt(0);
 
-        _directions.Enqueue(direction);
+        _directions.Add(direction);
+    }
+
+    public object Clone()
+    {
+        return new LatestDirectionsQueue
+        {
+            _directions = _directions.ToList()
+        };
+    }
+
+    public bool Equals(LatestDirectionsQueue? other)
+    {
+        return other != null && _directions.SequenceEqual(other._directions);
     }
 }

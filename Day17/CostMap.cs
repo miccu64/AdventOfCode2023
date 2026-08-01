@@ -25,19 +25,26 @@ public class CostMap
             {
                 ExtendedPointInfo<Cell>? nextCellInfo =
                     _grid.TryTraverse(currentCellInfo.X, currentCellInfo.Y, direction);
-                if (nextCellInfo == null || !currentCellInfo.Point.Queue.CanTraverse(nextCellInfo.UsedDirection))
+                if (nextCellInfo == null ||
+                    !currentCellInfo.Point.QueuesWrapper.CanTraverse(nextCellInfo.UsedDirection))
                     continue;
 
                 int newDistance = currentCellInfo.Point.DistanceFromStart + nextCellInfo.Point.Cost;
-                if (nextCellInfo.Point.DistanceFromStart <= newDistance)
-                    continue;
-
-                nextCellInfo.Point.DistanceFromStart = newDistance;
-
-                nextCellInfo.Point.Queue.EnqueueOtherDirections(
-                    currentCellInfo.Point.Queue,
-                    nextCellInfo.UsedDirection
-                );
+                if (nextCellInfo.Point.DistanceFromStart == newDistance)
+                {
+                    nextCellInfo.Point.QueuesWrapper.ConcatOtherMultipleDirections(
+                        currentCellInfo.Point.QueuesWrapper,
+                        direction
+                    );
+                }
+                else if (nextCellInfo.Point.DistanceFromStart > newDistance)
+                {
+                    nextCellInfo.Point.DistanceFromStart = newDistance;
+                    nextCellInfo.Point.QueuesWrapper.ReplaceMultipleDirections(
+                        currentCellInfo.Point.QueuesWrapper,
+                        direction
+                    );
+                }
             }
 
             currentCellInfo.Point.IsVisited = true;
@@ -50,7 +57,7 @@ public class CostMap
                 ? null
                 : new ExtendedPointInfo<Cell>(
                     lowestCellInfo.Point, lowestCellInfo.X, lowestCellInfo.Y,
-                    lowestCellInfo.Point.Queue.PeekLastDirection()
+                    default// unneeded
                 );
 
             _grid.PrintGridToConsole(c => c.DistanceFromStart.ToString());
