@@ -2,9 +2,9 @@ using AocHelpers.Models;
 
 namespace Day17.Models;
 
-public class TraversalInfo(int distance)
+public class TraversalInfo
 {
-    public int Distance { get; } = distance;
+    public int DistanceFromStart { get; init; }
     private Direction LatestDirection { get; init; }
     private int LatestDirectionRepeats { get; init; }
 
@@ -31,8 +31,9 @@ public class TraversalInfo(int distance)
             repeats = LatestDirectionRepeats + 1;
         }
 
-        return new TraversalInfo(Distance + cost)
+        return new TraversalInfo
         {
+            DistanceFromStart = DistanceFromStart + cost,
             LatestDirection = direction,
             LatestDirectionRepeats = repeats
         };
