@@ -17,7 +17,7 @@ public class CostMap
     public int DoDijkstra()
     {
         ExtendedPointInfo<Cell>? currentCellInfo = new(_grid[0, 0], 0, 0, Direction.Right);
-        currentCellInfo.Point.TraversalInfos.Add(new TraversalInfo());
+        currentCellInfo.Point.AddRangeTraversalInfos(new TraversalInfo());
 
         while (currentCellInfo != null)
         {
@@ -28,24 +28,19 @@ public class CostMap
                 if (nextCellInfo == null)
                     continue;
 
-                List<TraversalInfo> possibleTraversals = currentCellInfo.Point.TraversalInfos
-                    .Where(info => info.CanTraverse(direction))
-                    .ToList();
+                List<TraversalInfo> possibleTraversals = currentCellInfo.Point.GetPossibleTraversalInfos(direction);
                 if (possibleTraversals.Count == 0)
                     continue;
 
-                nextCellInfo.Point.TraversalInfos.AddRange(
-                    possibleTraversals.Select(t => t.Traverse(direction, nextCellInfo.Point.Cost))
+                nextCellInfo.Point.AddRangeTraversalInfos(
+                    possibleTraversals.Select(t => t.Traverse(direction, nextCellInfo.Point.Cost)).ToArray()
                 );
             }
 
             currentCellInfo.Point.IsVisited = true;
 
-            PointInfo<Cell>? lowestCellInfo = _grid.AllPoints.Where(cell =>
-                    !cell.Point.IsVisited
-                    && cell.Point.TraversalInfos.Any()
-                )
-                .OrderBy(cell => cell.Point.TraversalInfos.Min(info => info.DistanceFromStart))
+            PointInfo<Cell>? lowestCellInfo = _grid.AllPoints.Where(cell => !cell.Point.IsVisited)
+                .OrderBy(cell => cell.Point.GetMinTraversalDistance())
                 .FirstOrDefault();
 
             currentCellInfo = lowestCellInfo == null
@@ -56,7 +51,7 @@ public class CostMap
                 );
         }
 
-        int endResult = _grid[_grid.Width - 1, _grid.Height - 1].TraversalInfos.Min(info => info.DistanceFromStart);
+        int endResult = _grid[_grid.Width - 1, _grid.Height - 1].GetMinTraversalDistance();
         return endResult;
     }
 }

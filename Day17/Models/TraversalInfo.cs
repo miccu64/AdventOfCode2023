@@ -4,9 +4,9 @@ namespace Day17.Models;
 
 public class TraversalInfo
 {
-    public int DistanceFromStart { get; init; }
-    private Direction LatestDirection { get; init; }
-    private int LatestDirectionRepeats { get; init; }
+    public int DistanceFromStart { get; private init; }
+    public Direction LatestDirection { get; private init; }
+    public int LatestDirectionRepeats { get; private init; }
 
     public bool CanTraverse(Direction direction)
     {
