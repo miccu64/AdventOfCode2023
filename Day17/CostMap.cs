@@ -38,13 +38,11 @@ public class CostMap
 
             currentCellInfo.Point.MarkAsVisited();
 
-            PointInfo<Cell>? lowestCellInfo = _grid.AllPoints.Where(cell => !cell.Point.IsVisited)
-                .OrderBy(cell => cell.Point.GetMinTraversalDistance())
-                .FirstOrDefault();
+            currentCellInfo = _grid.AllPoints
+                .Where(cell => cell.Point.UnvisitedInfoExists)
+                .MinBy(cell => cell.Point.GetMinTraversalDistance());
 
             // _grid.PrintGridToConsole((c) => c.GetMinTraversalDistance().ToString());
-
-            currentCellInfo = lowestCellInfo;
         }
 
         int endResult = _grid[_grid.Width - 1, _grid.Height - 1].GetMinTraversalDistance();

@@ -5,7 +5,7 @@ namespace Day17.Models;
 public class Cell(char c)
 {
     public int Cost { get; } = int.Parse(c.ToString());
-    public bool IsVisited => _traversalInfos.Any() && _traversalInfos.All(i => i.IsVisited);
+    public bool UnvisitedInfoExists => _traversalInfos.Any(i => !i.IsVisited);
     private List<TraversalInfo> _traversalInfos = [];
 
     public void AddRangeTraversalInfos(params TraversalInfo[] traversalInfos)
@@ -28,9 +28,7 @@ public class Cell(char c)
 
     public int GetMinTraversalDistance()
     {
-        return _traversalInfos.Any()
-            ? _traversalInfos.Min(info => info.DistanceFromStart)
-            : int.MaxValue;
+        return _traversalInfos.Min(info => info.DistanceFromStart);
     }
 
     public void MarkAsVisited()
