@@ -16,15 +16,14 @@ public class CostMap
 
     public int DoDijkstra()
     {
-        ExtendedPointInfo<Cell>? currentCellInfo = new(_grid[0, 0], 0, 0, Direction.Right);
+        PointInfo<Cell>? currentCellInfo = new(_grid[0, 0], 0, 0);
         currentCellInfo.Point.AddRangeTraversalInfos(new TraversalInfo());
 
         while (currentCellInfo != null)
         {
             foreach (Direction direction in _allDirections)
             {
-                ExtendedPointInfo<Cell>? nextCellInfo =
-                    _grid.TryTraverse(currentCellInfo.X, currentCellInfo.Y, direction);
+                PointInfo<Cell>? nextCellInfo = _grid.TryTraverse(currentCellInfo.X, currentCellInfo.Y, direction);
                 if (nextCellInfo == null)
                     continue;
 
@@ -43,12 +42,9 @@ public class CostMap
                 .OrderBy(cell => cell.Point.GetMinTraversalDistance())
                 .FirstOrDefault();
 
-            currentCellInfo = lowestCellInfo == null
-                ? null
-                : new ExtendedPointInfo<Cell>(
-                    lowestCellInfo.Point, lowestCellInfo.X, lowestCellInfo.Y,
-                    default // unneeded
-                );
+            //_grid.PrintGridToConsole((c) => c.GetMinTraversalDistance().ToString());
+
+            currentCellInfo = lowestCellInfo;
         }
 
         int endResult = _grid[_grid.Width - 1, _grid.Height - 1].GetMinTraversalDistance();
