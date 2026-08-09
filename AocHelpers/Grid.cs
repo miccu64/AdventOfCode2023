@@ -10,8 +10,8 @@ namespace AocHelpers
     {
         private readonly T[,] _layout;
 
-        public int Width => _layout.GetLength(0);
-        public int Height => _layout.GetLength(1);
+        public int Width => _layout.GetLength(1);
+        public int Height => _layout.GetLength(0);
 
         public IReadOnlyList<PointInfo<T>> AllPoints { get; }
 
@@ -57,8 +57,10 @@ namespace AocHelpers
                 _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
             };
 
-            bool isOutOfBounds = newCoordinates.x < 0 || newCoordinates.x >= Width || newCoordinates.y < 0 ||
-                                 newCoordinates.y >= Height;
+            bool isOutOfBounds = newCoordinates.x < 0
+                                 || newCoordinates.x >= Width
+                                 || newCoordinates.y < 0
+                                 || newCoordinates.y >= Height;
             if (isOutOfBounds)
                 return null;
 
