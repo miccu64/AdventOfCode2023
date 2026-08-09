@@ -14,10 +14,10 @@ public class CostMap
         _grid = new Grid<Cell>(fileName, c => new Cell(c));
     }
 
-    public int DoDijkstra()
+    public int DoDijkstra(Boundaries boundaries)
     {
         PointInfo<Cell>? currentCellInfo = new(_grid[0, 0], 0, 0);
-        currentCellInfo.Point.AddRangeTraversalInfos(new TraversalInfo());
+        currentCellInfo.Point.AddRangeTraversalInfos(new TraversalInfo(boundaries));
 
         while (currentCellInfo != null)
         {

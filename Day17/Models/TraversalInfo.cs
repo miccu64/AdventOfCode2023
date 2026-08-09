@@ -3,7 +3,7 @@ using AocHelpers.Models;
 
 namespace Day17.Models;
 
-public class TraversalInfo
+public class TraversalInfo(Boundaries boundaries)
 {
     public int DistanceFromStart { get; private init; }
     public Direction LatestDirection { get; private init; }
@@ -14,10 +14,11 @@ public class TraversalInfo
     {
         if (direction.IsOppositeDirection(LatestDirection))
             return false;
-        if (LatestDirection != direction)
-            return true;
+        if (LatestDirection == direction)
+            return LatestDirectionRepeats < boundaries.MaxDirectionRepeats;
 
-        return LatestDirectionRepeats < 3;
+        bool allowStartingPoint = LatestDirectionRepeats == 0;
+        return allowStartingPoint || LatestDirectionRepeats >= boundaries.MinDirectionRepeats;
     }
 
     public TraversalInfo Traverse(Direction direction, int cost)
@@ -25,7 +26,7 @@ public class TraversalInfo
         if (!CanTraverse(direction))
             throw new InvalidOperationException("Traversal is not allowed");
 
-        return new TraversalInfo
+        return new TraversalInfo(boundaries)
         {
             DistanceFromStart = DistanceFromStart + cost,
             LatestDirection = direction,
