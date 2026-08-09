@@ -8,6 +8,7 @@ public class TraversalInfo
     public int DistanceFromStart { get; private init; }
     public Direction LatestDirection { get; private init; }
     public int LatestDirectionRepeats { get; private init; }
+    public bool IsVisited { get; private set; }
 
     public bool CanTraverse(Direction direction)
     {
@@ -30,5 +31,10 @@ public class TraversalInfo
             LatestDirection = direction,
             LatestDirectionRepeats = LatestDirection == direction ? (LatestDirectionRepeats + 1) : 1
         };
+    }
+
+    public void MarkAsVisited()
+    {
+        IsVisited = true;
     }
 }
