@@ -41,11 +41,8 @@ public class CostMap
             currentCellInfo = _grid.AllPoints
                 .Where(cell => cell.Point.UnvisitedInfoExists)
                 .MinBy(cell => cell.Point.GetMinTraversalDistance());
-
-            // _grid.PrintGridToConsole((c) => c.GetMinTraversalDistance().ToString());
         }
 
-        int endResult = _grid[_grid.Width - 1, _grid.Height - 1].GetMinTraversalDistance();
-        return endResult;
+        return _grid[_grid.Width - 1, _grid.Height - 1].GetFinalPointResult();
     }
 }

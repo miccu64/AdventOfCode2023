@@ -31,6 +31,14 @@ public class Cell(char c)
         return _traversalInfos.Min(info => info.DistanceFromStart);
     }
 
+    public int GetFinalPointResult()
+    {
+        return _traversalInfos.Where(i => i.LatestDirectionRepeats >= i.Boundaries.MinDirectionRepeats)
+            .OrderBy(i => i.DistanceFromStart)
+            .First()
+            .DistanceFromStart;
+    }
+
     public void MarkAsVisited()
     {
         foreach (TraversalInfo info in _traversalInfos)
