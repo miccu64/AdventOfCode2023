@@ -8,16 +8,18 @@ public class CostMap
 {
     private readonly Grid<Cell> _grid;
     private readonly List<Direction> _allDirections = [Direction.Down, Direction.Right, Direction.Up, Direction.Left];
+    private readonly Boundaries _boundaries;
 
-    public CostMap(string fileName)
+    public CostMap(string fileName, Boundaries boundaries)
     {
-        _grid = new Grid<Cell>(fileName, c => new Cell(c));
+        _boundaries = boundaries;
+        _grid = new Grid<Cell>(fileName, c => new Cell(c, _boundaries));
     }
 
-    public int DoDijkstra(Boundaries boundaries)
+    public int DoDijkstra()
     {
         PointInfo<Cell>? currentCellInfo = new(_grid[0, 0], 0, 0);
-        currentCellInfo.Point.AddRangeTraversalInfos(new TraversalInfo(boundaries));
+        currentCellInfo.Point.AddRangeTraversalInfos(new TraversalInfo(_boundaries));
 
         while (currentCellInfo != null)
         {
