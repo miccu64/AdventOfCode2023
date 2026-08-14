@@ -41,8 +41,9 @@ public class CostMap
             currentCellInfo.Point.MarkAsVisited();
 
             currentCellInfo = _grid.AllPoints
-                .Where(cell => cell.Point.UnvisitedInfoExists)
-                .MinBy(cell => cell.Point.GetMinTraversalDistance());
+                .Select(cell => new { cell, minDistance = cell.Point.GetMinUnvisitedTraversalDistance() })
+                .Where(x => x.minDistance != null)
+                .MinBy(cell => cell.minDistance!.Value)?.cell;
         }
 
         return _grid[_grid.Width - 1, _grid.Height - 1].GetFinalPointResult();
