@@ -40,12 +40,27 @@ public class CostMap
 
             currentCellInfo.Point.MarkAsVisited();
 
-            currentCellInfo = _grid.AllPoints
-                .Select(cell => new { cell, minDistance = cell.Point.GetMinUnvisitedTraversalDistance() })
-                .Where(x => x.minDistance != null)
-                .MinBy(cell => cell.minDistance!.Value)?.cell;
+            currentCellInfo = GetNewCurrentCellInfo();
         }
 
         return _grid[_grid.Width - 1, _grid.Height - 1].GetFinalPointResult();
+    }
+
+    private PointInfo<Cell>? GetNewCurrentCellInfo()
+    {
+        PointInfo<Cell>? nextCellInfo = null;
+        int minDistance = int.MaxValue;
+
+        foreach (PointInfo<Cell> cell in _grid.AllPoints)
+        {
+            int? distance = cell.Point.GetMinUnvisitedTraversalDistance();
+            if (distance < minDistance)
+            {
+                minDistance = distance.Value;
+                nextCellInfo = cell;
+            }
+        }
+
+        return nextCellInfo;
     }
 }
