@@ -5,12 +5,11 @@ namespace AocHelpers.Tests;
 public class GridTests
 {
     private Grid<TestRecord> _grid;
-    private const string FileName = "TestFile1.txt";
 
     [SetUp]
     public void Setup()
     {
-        _grid = new Grid<TestRecord>(FileName, c => new TestRecord(c));
+        _grid = new Grid<TestRecord>("TestFile1.txt", c => new TestRecord(c));
     }
 
     [Test]
@@ -79,6 +78,44 @@ public class GridTests
     {
         // Act / Assert
         Assert.That(_grid.TryTraverse(-1, 0, Direction.Down), Is.Null);
+    }
+
+    [TestCase(Direction.Down, 0, 0, 0, 1, '3')]
+    [TestCase(Direction.Up, 0, 1, 0, 0, '1')]
+    [TestCase(Direction.Left, 1, 0, 0, 0, '1')]
+    [TestCase(Direction.Right, 0, 0, 1, 0, '2')]
+    [Test]
+    public void TryTraverse_Returns_Expected_Result(
+        Direction direction,
+        int x,
+        int y,
+        int expectedX,
+        int expectedY,
+        char expectedValue
+    )
+    {
+        // Act
+        ExtendedPointInfo<TestRecord>? info = _grid.TryTraverse(x, y, direction);
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(info, Is.Not.Null);
+            Assert.That(info.UsedDirection, Is.EqualTo(direction));
+            Assert.That(info.X, Is.EqualTo(expectedX));
+            Assert.That(info.Y, Is.EqualTo(expectedY));
+            Assert.That(info.Point.C, Is.EqualTo(expectedValue));
+        }
+    }
+
+    [Test]
+    public void Throws_On_Uneven_Array()
+    {
+        // Act / Assert
+        Assert.Throws<ArgumentException>(() =>
+        {
+            Grid<TestRecord> _ = new("UnevenArray.txt", c => new TestRecord(c));
+        });
     }
 
     private static object[] _outOfBoundsCases =

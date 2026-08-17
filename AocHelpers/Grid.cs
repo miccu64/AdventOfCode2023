@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using AocHelpers.Models;
 
@@ -24,6 +25,9 @@ namespace AocHelpers
 
             int width = text[0].Length;
             int height = text.Length;
+
+            if (text.Any(line => line.Length != width))
+                throw new ArgumentException("Uneven array");
 
             List<PointInfo<T>> points = new List<PointInfo<T>>();
 
