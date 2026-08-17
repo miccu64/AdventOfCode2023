@@ -5,6 +5,7 @@ namespace Day17.Models;
 public class Cell(char c, Boundaries boundaries)
 {
     public int Cost { get; } = int.Parse(c.ToString());
+    public bool IsVisited => _orderedTraversalInfos.All(i => i.IsVisited);
     private List<TraversalInfo> _orderedTraversalInfos = [];
 
     public void AddRangeTraversalInfos(params TraversalInfo[] traversalInfos)
@@ -24,11 +25,6 @@ public class Cell(char c, Boundaries boundaries)
     public List<TraversalInfo> GetPossibleTraversalInfos(Direction direction)
     {
         return _orderedTraversalInfos.Where(i => i.CanTraverse(direction)).ToList();
-    }
-
-    public int? GetMinUnvisitedTraversalDistance()
-    {
-        return _orderedTraversalInfos.FirstOrDefault(i => !i.IsVisited)?.DistanceFromStart;
     }
 
     public int GetFinalPointResult()

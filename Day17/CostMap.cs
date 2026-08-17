@@ -18,11 +18,17 @@ public class CostMap
 
     public int DoDijkstra()
     {
-        PointInfo<Cell>? currentCellInfo = new(_grid[0, 0], 0, 0);
-        currentCellInfo.Point.AddRangeTraversalInfos(new TraversalInfo(_boundaries));
+        PointInfo<Cell> firstCellInfo = new(_grid[0, 0], 0, 0);
+        firstCellInfo.Point.AddRangeTraversalInfos(new TraversalInfo(_boundaries));
 
-        while (currentCellInfo != null)
+        Queue<PointInfo<Cell>> queue = new();
+        queue.Enqueue(firstCellInfo);
+
+        while (queue.TryDequeue(out PointInfo<Cell>? currentCellInfo))
         {
+            if (currentCellInfo.Point.IsVisited)
+                continue;
+
             foreach (Direction direction in _allDirections)
             {
                 PointInfo<Cell>? nextCellInfo = _grid.TryTraverse(currentCellInfo.X, currentCellInfo.Y, direction);
@@ -36,31 +42,14 @@ public class CostMap
                 nextCellInfo.Point.AddRangeTraversalInfos(
                     possibleTraversals.Select(t => t.Traverse(direction, nextCellInfo.Point.Cost)).ToArray()
                 );
+
+                if (!nextCellInfo.Point.IsVisited)
+                    queue.Enqueue(nextCellInfo);
             }
 
             currentCellInfo.Point.MarkAsVisited();
-
-            currentCellInfo = GetNewCurrentCellInfo();
         }
 
         return _grid[_grid.Width - 1, _grid.Height - 1].GetFinalPointResult();
-    }
-
-    private PointInfo<Cell>? GetNewCurrentCellInfo()
-    {
-        PointInfo<Cell>? nextCellInfo = null;
-        int minDistance = int.MaxValue;
-
-        foreach (PointInfo<Cell> cell in _grid.AllPoints)
-        {
-            int? distance = cell.Point.GetMinUnvisitedTraversalDistance();
-            if (distance < minDistance)
-            {
-                minDistance = distance.Value;
-                nextCellInfo = cell;
-            }
-        }
-
-        return nextCellInfo;
     }
 }

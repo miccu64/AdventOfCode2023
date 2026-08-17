@@ -19,4 +19,4 @@ CostMap part2Test2CostMap = new("TestData2.txt", part2Boundaries);
 Console.WriteLine($"Part2 test2 result: {part2Test2CostMap.DoDijkstra()}, expected: 71");
 
 CostMap part2CostMap = new("Input.txt", part2Boundaries);
-Console.WriteLine($"Part1 result: {part2CostMap.DoDijkstra()}");
+Console.WriteLine($"Part2 result: {part2CostMap.DoDijkstra()}");
