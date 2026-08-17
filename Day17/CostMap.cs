@@ -13,13 +13,13 @@ public class CostMap
     public CostMap(string fileName, Boundaries boundaries)
     {
         _boundaries = boundaries;
-        _grid = new Grid<Cell>(fileName, c => new Cell(c, _boundaries));
+        _grid = new Grid<Cell>(fileName, c => new Cell(c));
     }
 
     public int DoDijkstra()
     {
         PointInfo<Cell> firstCellInfo = new(_grid[0, 0], 0, 0);
-        firstCellInfo.Point.AddRangeTraversalInfos(new TraversalInfo(_boundaries));
+        firstCellInfo.Point.AddRangeTraversalInfos([new TraversalInfo(_boundaries)]);
 
         Queue<PointInfo<Cell>> queue = new();
         queue.Enqueue(firstCellInfo);
@@ -40,7 +40,7 @@ public class CostMap
                     continue;
 
                 nextCellInfo.Point.AddRangeTraversalInfos(
-                    possibleTraversals.Select(t => t.Traverse(direction, nextCellInfo.Point.Cost)).ToArray()
+                    possibleTraversals.Select(t => t.Traverse(direction, nextCellInfo.Point.Cost))
                 );
 
                 if (!nextCellInfo.Point.IsVisited)
@@ -50,6 +50,6 @@ public class CostMap
             currentCellInfo.Point.MarkAsVisited();
         }
 
-        return _grid[_grid.Width - 1, _grid.Height - 1].GetFinalPointResult();
+        return _grid[_grid.Width - 1, _grid.Height - 1].GetFinalPointResult(_boundaries);
     }
 }

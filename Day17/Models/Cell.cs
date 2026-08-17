@@ -2,13 +2,13 @@ using AocHelpers.Models;
 
 namespace Day17.Models;
 
-public class Cell(char c, Boundaries boundaries)
+public class Cell(char c)
 {
     public int Cost { get; } = int.Parse(c.ToString());
     public bool IsVisited => _orderedTraversalInfos.All(i => i.IsVisited);
     private List<TraversalInfo> _orderedTraversalInfos = [];
 
-    public void AddRangeTraversalInfos(params TraversalInfo[] traversalInfos)
+    public void AddRangeTraversalInfos(IEnumerable<TraversalInfo> traversalInfos)
     {
         _orderedTraversalInfos = _orderedTraversalInfos
             .Concat(traversalInfos)
@@ -27,7 +27,7 @@ public class Cell(char c, Boundaries boundaries)
         return _orderedTraversalInfos.Where(i => i.CanTraverse(direction)).ToList();
     }
 
-    public int GetFinalPointResult()
+    public int GetFinalPointResult(Boundaries boundaries)
     {
         return _orderedTraversalInfos
             .First(i => i.LatestDirectionRepeats >= boundaries.MinDirectionRepeats)
