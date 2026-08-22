@@ -46,6 +46,12 @@ namespace AocHelpers
             AllPoints = points;
         }
 
+        public Grid(T[,] layout)
+        {
+            _layout = layout;
+            AllPoints = _layout.Cast<PointInfo<T>>().ToList();
+        }
+
         /// <summary>
         /// Try to traverse in given direction by 1 field in given direction.
         /// </summary>

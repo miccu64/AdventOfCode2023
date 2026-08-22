@@ -1,3 +1,4 @@
+using AocHelpers;
 using AocHelpers.Models;
 
 namespace Day18.Models;
@@ -15,7 +16,36 @@ public class DigPlan
 
     public void Apply()
     {
+        Grid<LagoonInterior> grid = BuildGrid();
+    }
+
+    private Grid<LagoonInterior> BuildGrid()
+    {
         List<PointInfo<LagoonEdge>> edges = GetEdges();
+
+        int xMin = edges.Min(x => x.X);
+        int xMax = edges.Max(x => x.X);
+        int yMin = edges.Min(x => x.Y);
+        int yMax = edges.Max(x => x.Y);
+
+        int height = yMax - yMin + 1;
+        int width = xMax - xMin + 1;
+        LagoonInterior[,] layout = new LagoonInterior[height, width];
+
+        foreach (PointInfo<LagoonEdge> e in edges)
+        {
+            layout[e.Y, e.X] = e.Point;
+        }
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                layout[y, x] = new LagoonInterior();
+            }
+        }
+
+        return new Grid<LagoonInterior>(layout);
     }
 
     private List<PointInfo<LagoonEdge>> GetEdges()
