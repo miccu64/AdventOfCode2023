@@ -21,36 +21,43 @@ public class DigPlan
         for (int y = 0; y < grid.Height; y++)
         {
             bool isInside = false;
+            int edgeCounter = 0;
             for (int x = 0; x < grid.Width; x++)
             {
-                isInside = TryMarkAsDugOut(grid[x, y], isInside);
+                TryMarkAsDugOut(grid[x, y], ref isInside, ref edgeCounter);
             }
         }
 
         for (int x = 0; x < grid.Width; x++)
         {
             bool isInside = false;
+            int edgeCounter = 0;
             for (int y = 0; y < grid.Height; y++)
             {
-                isInside = TryMarkAsDugOut(grid[x, y], isInside);
+                TryMarkAsDugOut(grid[x, y], ref isInside, ref edgeCounter);
             }
         }
+
+        grid.PrintGridToConsole((i) => i.IsDugOut ? "1" : "0");
 
         return grid.AllPoints.Count(p => p.Point.IsDugOut);
     }
 
-    private static bool TryMarkAsDugOut(LagoonInterior point, bool isInside)
+    private static void TryMarkAsDugOut(LagoonInterior point, ref bool isInside, ref int edgeCounter)
     {
         if (point is LagoonEdge)
         {
-            isInside = !isInside;
-        }
-        else if (isInside)
-        {
-            point.MarkAsDugOut();
-        }
+            edgeCounter++;
 
-        return isInside;
+            isInside = edgeCounter == 1 && !isInside;
+        }
+        else
+        {
+            if (isInside)
+                point.MarkAsDugOut();
+
+            edgeCounter = 0;
+        }
     }
 
     private Grid<LagoonInterior> BuildGrid()
