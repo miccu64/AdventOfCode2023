@@ -1,3 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using Day18.Models;
 
-Console.WriteLine("Hello, World!");
+DigPlan planTestPart1 = new("TestData1.txt");
+Console.WriteLine($"Part1 test1 result: {planTestPart1.CountCubicMeters()}, expected: 62");

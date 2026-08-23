@@ -49,7 +49,17 @@ namespace AocHelpers
         public Grid(T[,] layout)
         {
             _layout = layout;
-            AllPoints = _layout.Cast<PointInfo<T>>().ToList();
+
+            List<PointInfo<T>> points = new List<PointInfo<T>>();
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    points.Add(new PointInfo<T>(this[x, y], x, y));
+                }
+            }
+
+            AllPoints = points;
         }
 
         /// <summary>

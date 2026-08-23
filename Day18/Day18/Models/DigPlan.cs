@@ -7,16 +7,50 @@ public class DigPlan
 {
     private readonly List<DigInstruction> _digInstructions;
 
-    public DigPlan(string fileName, List<DigInstruction> digInstructions)
+    public DigPlan(string fileName)
     {
         _digInstructions = File.ReadAllLines(fileName)
             .Select(x => new DigInstruction(x))
             .ToList();
     }
 
-    public void Apply()
+    public int CountCubicMeters()
     {
         Grid<LagoonInterior> grid = BuildGrid();
+
+        for (int y = 0; y < grid.Height; y++)
+        {
+            bool isInside = false;
+            for (int x = 0; x < grid.Width; x++)
+            {
+                isInside = TryMarkAsDugOut(grid[x, y], isInside);
+            }
+        }
+
+        for (int x = 0; x < grid.Width; x++)
+        {
+            bool isInside = false;
+            for (int y = 0; y < grid.Height; y++)
+            {
+                isInside = TryMarkAsDugOut(grid[x, y], isInside);
+            }
+        }
+
+        return grid.AllPoints.Count(p => p.Point.IsDugOut);
+    }
+
+    private static bool TryMarkAsDugOut(LagoonInterior point, bool isInside)
+    {
+        if (point is LagoonEdge)
+        {
+            isInside = !isInside;
+        }
+        else if (isInside)
+        {
+            point.MarkAsDugOut();
+        }
+
+        return isInside;
     }
 
     private Grid<LagoonInterior> BuildGrid()
@@ -41,7 +75,8 @@ public class DigPlan
         {
             for (int x = 0; x < width; x++)
             {
-                layout[y, x] = new LagoonInterior();
+                if (layout[y, x] is not LagoonEdge)
+                    layout[y, x] = new LagoonInterior();
             }
         }
 
