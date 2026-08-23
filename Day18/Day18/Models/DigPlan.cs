@@ -75,7 +75,7 @@ public class DigPlan
 
         foreach (PointInfo<LagoonEdge> e in edges)
         {
-            layout[e.Y, e.X] = e.Point;
+            layout[e.Y - yMin, e.X - xMin] = e.Point;
         }
 
         for (int y = 0; y < height; y++)
