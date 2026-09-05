@@ -38,6 +38,24 @@ public class DigPlan
             }
         }
 
+        foreach (PointInfo<LagoonInterior> point in grid.AllPoints)
+        {
+            if (point.Point.IsDugOut)
+                continue;
+
+            List<Direction> allDirections = [Direction.Down, Direction.Up, Direction.Left, Direction.Right];
+            bool isNearDugOutInterior = allDirections.Any(dir =>
+            {
+                ExtendedPointInfo<LagoonInterior>? nextPoint = grid.TryTraverse(point.X, point.Y, dir);
+                if (nextPoint == null || !nextPoint.Point.IsDugOut)
+                    return false;
+
+                return nextPoint.Point is not LagoonEdge;
+            });
+            if (isNearDugOutInterior)
+                point.Point.MarkAsDugOut();
+        }
+
         grid.PrintGridToConsole((i) => i.IsDugOut ? "1" : "0");
 
         return grid.AllPoints.Count(p => p.Point.IsDugOut);
