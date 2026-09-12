@@ -94,19 +94,34 @@ namespace AocHelpers
         /// <param name="printFunc">Function stating what should be printed.</param>
         public void PrintGridToConsole(Func<T, string> printFunc)
         {
+            Console.WriteLine(BuildOutput(printFunc, 4));
+        }
+
+        /// <summary>
+        /// Prints grid to file for debugging purposes.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="printFunc">Function stating what should be printed.</param>
+        public void PrintGridToFile(string fileName, Func<T, string> printFunc)
+        {
+            File.WriteAllText(fileName, BuildOutput(printFunc, 1));
+        }
+
+        private string BuildOutput(Func<T, string> printFunc, int padding)
+        {
             StringBuilder sb = new StringBuilder();
 
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    sb.Append(printFunc(this[x, y]).PadRight(4));
+                    sb.Append(printFunc(this[x, y]).PadRight(padding));
                 }
 
                 sb.AppendLine();
             }
 
-            Console.WriteLine(sb.ToString());
+            return sb.ToString();
         }
     }
 }
