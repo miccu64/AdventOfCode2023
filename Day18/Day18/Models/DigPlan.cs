@@ -7,6 +7,9 @@ public class DigPlan
 {
     private readonly List<DigInstruction> _digInstructions;
 
+    private static readonly IReadOnlyList<Direction> AllDirections =
+        [Direction.Down, Direction.Up, Direction.Left, Direction.Right];
+
     public DigPlan(string fileName)
     {
         _digInstructions = File.ReadAllLines(fileName)
@@ -18,64 +21,50 @@ public class DigPlan
     {
         Grid<LagoonInterior> grid = BuildGrid();
 
-        for (int y = 0; y < grid.Height; y++)
+        Queue<ExtendedPointInfo<LagoonInterior>> queue = new();
+        queue.Enqueue(GetFirstInterior(grid));
+
+        while (queue.TryDequeue(out ExtendedPointInfo<LagoonInterior>? point))
         {
-            bool isInside = false;
-            int edgeCounter = 0;
-            for (int x = 0; x < grid.Width; x++)
+            foreach (Direction direction in AllDirections)
             {
-                TryMarkAsDugOut(grid[x, y], ref isInside, ref edgeCounter);
+                ExtendedPointInfo<LagoonInterior>? nextPoint = grid.TryTraverse(point.X, point.Y, direction);
+                if (nextPoint is { Point.IsDugOut: false })
+                {
+                    nextPoint.Point.MarkAsDugOut();
+                    queue.Enqueue(nextPoint);
+                }
             }
+
+            point.Point.MarkAsDugOut();
         }
 
-        for (int x = 0; x < grid.Width; x++)
-        {
-            bool isInside = false;
-            int edgeCounter = 0;
-            for (int y = 0; y < grid.Height; y++)
-            {
-                TryMarkAsDugOut(grid[x, y], ref isInside, ref edgeCounter);
-            }
-        }
-
-        foreach (PointInfo<LagoonInterior> point in grid.AllPoints)
-        {
-            if (point.Point.IsDugOut)
-                continue;
-
-            List<Direction> allDirections = [Direction.Down, Direction.Up, Direction.Left, Direction.Right];
-            bool isNearDugOutInterior = allDirections.Any(dir =>
-            {
-                ExtendedPointInfo<LagoonInterior>? nextPoint = grid.TryTraverse(point.X, point.Y, dir);
-                if (nextPoint == null || !nextPoint.Point.IsDugOut)
-                    return false;
-
-                return nextPoint.Point is not LagoonEdge;
-            });
-            if (isNearDugOutInterior)
-                point.Point.MarkAsDugOut();
-        }
-
-        grid.PrintGridToConsole((i) => i.IsDugOut ? "1" : "0");
+        grid.PrintGridToFile("result.txt", (i) => i.IsDugOut ? "#" : " ");
 
         return grid.AllPoints.Count(p => p.Point.IsDugOut);
     }
 
-    private static void TryMarkAsDugOut(LagoonInterior point, ref bool isInside, ref int edgeCounter)
+    private static ExtendedPointInfo<LagoonInterior> GetFirstInterior(Grid<LagoonInterior> grid)
     {
-        if (point is LagoonEdge)
-        {
-            edgeCounter++;
+        int startX = grid.Width / 2;
+        int y = 0;
+        const Direction direction = Direction.Down;
 
-            isInside = edgeCounter == 1 && !isInside;
-        }
-        else
+        LagoonInterior firstPoint = grid[startX, y];
+        if (firstPoint is not LagoonEdge)
         {
-            if (isInside)
-                point.MarkAsDugOut();
-
-            edgeCounter = 0;
+            while (grid.TryTraverse(startX, y, direction)?.Point is not LagoonEdge)
+            {
+                y++;
+            }
         }
+
+        while (grid.TryTraverse(startX, y, direction)?.Point is LagoonEdge)
+        {
+            y++;
+        }
+
+        return grid.TryTraverse(startX, y, direction)!;
     }
 
     private Grid<LagoonInterior> BuildGrid()
